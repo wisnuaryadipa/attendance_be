@@ -2,6 +2,7 @@ import express from 'express';
 import config from './config';
 import Logger from './loaders/logger';
 import db from './loaders/sequelize'
+import loader from '@src/loaders'
 
 
 import './injection/module/ProcessEnv'
@@ -10,7 +11,7 @@ import './injection/module/ProcessEnv'
 async function startServer() {
     const app = express();
     
-    await require('./loaders').default({ expressApp: app });
+    await loader({ expressApp: app });
 
     app.get('/', (req, res) => res.send('Express + TypeScript Server'));
     

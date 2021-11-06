@@ -1,9 +1,8 @@
-import express, { Application } from 'express';
+import express, { Application, Router } from 'express';
 import v1 from '@src/router/api/v1'
 
+const api = Router();
 
-const api = (app: Application) => {
-    app.use('/', v1);
-}
+api.use('/', v1);
 
 export default api;

@@ -2,9 +2,10 @@ import express, { ErrorRequestHandler, Request } from 'express';
 import {ConditionalExpression} from 'typescript';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import {IError} from '../interfaces/IError';
-import config from '../config';
-import Logger from './logger';
+import {IError} from '@src/interfaces/IError';
+import config from '@src/config';
+import Logger from '@src/loaders/Logger';
+import routerCollection from '@src/router'
 
 
 
@@ -25,9 +26,16 @@ export default (app: express.Application) => {
   app.enable('trust proxy');
 
   app.use(cors());
-  app.use('/api')
+
+  /** LOAD ROUTER */
+
   // Middleware that transforms the raw string of req.body into json
-  app.use(bodyParser.json());
+  app.use(express.json({limit: '100mb'}));
+  app.use(express.urlencoded({
+    extended: false,
+    limit: '100mb'
+  }));
+  routerCollection(app);
 
   /// catch 404 and forward to error handler
   app.use((req: Request, res, next) => {

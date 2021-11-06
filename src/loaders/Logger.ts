@@ -1,6 +1,6 @@
 import winston from 'winston';
-import config from '../config';
-import {transports} from '../config/logging'
+import config from '@src/config';
+import {transports} from '@src/config/logging'
 
 const LoggerInstance = winston.createLogger({
   level: config.logs.level,

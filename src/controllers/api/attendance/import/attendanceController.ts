@@ -2,6 +2,7 @@ import express, {Request, Response} from "express";
 import {BaseController} from "@src/controllers/api/index";
 import {IOptions} from "@src/interfaces/IResponse"
 import xlsx from 'xlsx';
+import moment from 'moment';
 
 class Controller extends BaseController {
 
@@ -15,6 +16,18 @@ class Controller extends BaseController {
                 this.sendResponse(req, res, option);
             } else {
                 let attendanceJson = this.parseExcelToJson(req.file);
+
+                attendanceJson.map((attendanced:any, index) => {
+                    let regisAttendanced = attendanced.Time.split(' ');
+                    
+                    attendanced.checkIn = "";
+                    attendanced.checkOut = "";
+                    attendanced.workDuration = "";
+
+                    return attendanced;
+                })
+
+
                 option.status = 200;
                 option.message = "success";
                 option.data = attendanceJson;
@@ -34,8 +47,10 @@ class Controller extends BaseController {
         let wb = xlsx.read(excelFile?.buffer, {type: 'buffer'});
         let worksheet = wb.Sheets[wb.SheetNames[0]];
         let jsonXlsx = xlsx.utils.sheet_to_json(worksheet);
-        return JSON.stringify(jsonXlsx);
+        return jsonXlsx;
     }
+
+
 }
 
 export default new Controller();

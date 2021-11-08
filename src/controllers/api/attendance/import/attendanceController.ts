@@ -5,7 +5,16 @@ import xlsx from 'xlsx';
 import moment from 'moment';
 import { time } from "console";
 
+interface ISessionAttend {
+    sessionNumber: 1|2|3,
+    hour: number,
+    minute: number,
+    statusAttend: "IN"|"OUT",
+
+}
+
 class Controller extends BaseController {
+
 
     requestHandler = async (req: Request, res: Response) => {
         // this.sendResponse(req, res, {data: req.file});
@@ -19,6 +28,7 @@ class Controller extends BaseController {
                 let attendanceJson = this.parseExcelToJson(req.file);
 
                 attendanceJson.map((attendanced:any, index) => {
+
                     let removedDuplicAttend:string|[] = "";
                     if (attendanced.Time) {
                         let arrRegisAttendanced = attendanced.Time.split(' ');
@@ -26,11 +36,14 @@ class Controller extends BaseController {
                     }
                     attendanced.checkIn = "";
                     attendanced.checkOut = "";
+                    attendanced.checkInStatus = "";
+                    attendanced.checkOutStatus = "";
                     attendanced.workDuration = removedDuplicAttend;
+
+                    
 
                     return attendanced;
                 })
-
 
                 option.status = 200;
                 option.message = "success";
@@ -64,6 +77,7 @@ class Controller extends BaseController {
 
             if(index == 0) {_timeAttend = timeAttendFormated}
             if (diffAttend > 60 ){
+                // push array if minute gap between currentAttend and afterThisAttend
                 arrFilteredTimeAttends.push(_timeAttend.format("HH:mm") as never)
                 _timeAttend = tommorowTimeAttendFormated;
             }
@@ -71,6 +85,30 @@ class Controller extends BaseController {
 
         })
         return arrFilteredTimeAttends;
+    }
+
+    generateSessionAttend = (arrTimeAttends: [string]) => {
+        arrTimeAttends.forEach((timeAttend, index) => {
+
+        })
+    }
+
+    identifySession = (timeAttend: string, prefAttend: string) => {
+        const _time = moment(timeAttend, "HH.mm");
+        if (_time >= moment("06:00", "HH:mm") && _time <= moment("12:00", "HH:mm")){
+            // Attend status is CHECKIN
+
+        } else if (_time >= moment("14:00", "HH:mm") && _time <= moment("18:00", "HH:mm")) {
+            if (_time >= moment("06:00", "HH:mm") && _time <= moment("12:00", "HH:mm")) {
+                // Attend status is CHECKOUT
+
+            } else {
+                // Attend status is CHECKIN
+
+            }
+        } else if (_time >= moment("21:00", "HH:mm") && _time <= moment("03:00", "HH:mm")) {
+            // Attend status is CHECKOUT
+        }
     }
 
 

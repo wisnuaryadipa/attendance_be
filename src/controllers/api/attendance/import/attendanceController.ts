@@ -6,10 +6,10 @@ import moment from 'moment';
 import { time } from "console";
 
 interface ISessionAttend {
-    sessionNumber: 1|2|3,
-    hour: number,
-    minute: number,
-    statusAttend: "IN"|"OUT",
+    sessionNumber: 1|2|3|99,
+    hour: number|undefined,
+    minute: number|undefined,
+    statusAttend: "CHECKIN"|"CHECKOUT"|"ABNORMAL",
 
 }
 
@@ -29,18 +29,22 @@ class Controller extends BaseController {
 
                 attendanceJson.map((attendanced:any, index) => {
 
-                    let removedDuplicAttend:string|[] = "";
+                    let removedDuplicAttend:[] = [];
+                    let listAttend:any = [];
                     if (attendanced.Time) {
                         let arrRegisAttendanced = attendanced.Time.split(' ');
                         removedDuplicAttend = this.removeDuplicateAttendant(arrRegisAttendanced);
                     }
+                    removedDuplicAttend.forEach((timeAttend, index) => {
+                        let sessionAttend = this.identifySession(timeAttend, removedDuplicAttend[index-1]);
+                        listAttend.push(sessionAttend);
+                    })
                     attendanced.checkIn = "";
                     attendanced.checkOut = "";
                     attendanced.checkInStatus = "";
                     attendanced.checkOutStatus = "";
                     attendanced.workDuration = removedDuplicAttend;
-
-                    
+                    attendanced.listTimeAttend = listAttend;
 
                     return attendanced;
                 })
@@ -95,20 +99,37 @@ class Controller extends BaseController {
 
     identifySession = (timeAttend: string, prefAttend: string) => {
         const _time = moment(timeAttend, "HH.mm");
+        const _prefAttend = moment(prefAttend, "HH:mm");
+        let attendSession = {} as ISessionAttend;
+        attendSession.hour = parseInt(_time.format("HH"));
+        attendSession.minute = parseInt(_time.format("mm"));
+        
         if (_time >= moment("06:00", "HH:mm") && _time <= moment("12:00", "HH:mm")){
             // Attend status is CHECKIN
+            attendSession.sessionNumber = 1;
+            attendSession.statusAttend = "CHECKIN";
 
         } else if (_time >= moment("14:00", "HH:mm") && _time <= moment("18:00", "HH:mm")) {
-            if (_time >= moment("06:00", "HH:mm") && _time <= moment("12:00", "HH:mm")) {
+            if (_prefAttend >= moment("06:00", "HH:mm") && _prefAttend <= moment("12:00", "HH:mm")) {
                 // Attend status is CHECKOUT
+                attendSession.sessionNumber = 2;
+                attendSession.statusAttend = "CHECKOUT";
 
             } else {
                 // Attend status is CHECKIN
+                attendSession.sessionNumber = 2;
+                attendSession.statusAttend = "CHECKIN";
 
             }
-        } else if (_time >= moment("21:00", "HH:mm") && _time <= moment("03:00", "HH:mm")) {
+        } else if (_time >= moment("21:00", "HH:mm") || _time <= moment("03:00", "HH:mm")) {
             // Attend status is CHECKOUT
+            attendSession.sessionNumber = 3;
+            attendSession.statusAttend = "CHECKOUT";
+        } else {
+            attendSession.sessionNumber = 99;
+            attendSession.statusAttend = "ABNORMAL";
         }
+        return attendSession;
     }
 
 

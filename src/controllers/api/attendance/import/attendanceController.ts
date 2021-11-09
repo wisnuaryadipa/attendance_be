@@ -4,14 +4,16 @@ import {IOptions} from "@src/interfaces/IResponse"
 import xlsx from 'xlsx';
 import moment from 'moment';
 import { time } from "console";
+import _ from "lodash";
 
 interface ISessionAttend {
     sessionNumber: 1|2|3|99,
-    hour: number|undefined,
-    minute: number|undefined,
+    hour: number,
+    minute: number,
     statusAttend: "CHECKIN"|"CHECKOUT"|"ABNORMAL",
 
 }
+type ISessionAttends = ISessionAttend[];
 
 class Controller extends BaseController {
 
@@ -30,19 +32,26 @@ class Controller extends BaseController {
                 attendanceJson.map((attendanced:any, index) => {
 
                     let removedDuplicAttend:[] = [];
-                    let listAttend:any = [];
+                    let listAttend:ISessionAttend[] = [];
                     if (attendanced.Time) {
+                        // check if there any attend recorded
+                        // then removing all duplicate attendance record
                         let arrRegisAttendanced = attendanced.Time.split(' ');
                         removedDuplicAttend = this.removeDuplicateAttendant(arrRegisAttendanced);
                     }
                     removedDuplicAttend.forEach((timeAttend, index) => {
+                        // create sessionAttend object from attendance record
                         let sessionAttend = this.identifySession(timeAttend, removedDuplicAttend[index-1]);
                         listAttend.push(sessionAttend);
                     })
+
+                    let checkInToday = this.getCheckInToday(listAttend);
+                    let checkOutToday = this.getCheckOutToday(listAttend, checkInToday);
+
                     attendanced.checkIn = "";
                     attendanced.checkOut = "";
-                    attendanced.checkInStatus = "";
-                    attendanced.checkOutStatus = "";
+                    attendanced.checkInStatus = checkInToday;
+                    attendanced.checkOutStatus = checkOutToday;
                     attendanced.workDuration = removedDuplicAttend;
                     attendanced.listTimeAttend = listAttend;
 
@@ -109,7 +118,7 @@ class Controller extends BaseController {
             attendSession.sessionNumber = 1;
             attendSession.statusAttend = "CHECKIN";
 
-        } else if (_time >= moment("14:00", "HH:mm") && _time <= moment("18:00", "HH:mm")) {
+        } else if (_time >= moment("14:00", "HH:mm") && _time <= moment("21:59", "HH:mm")) {
             if (_prefAttend >= moment("06:00", "HH:mm") && _prefAttend <= moment("12:00", "HH:mm")) {
                 // Attend status is CHECKOUT
                 attendSession.sessionNumber = 2;
@@ -121,7 +130,7 @@ class Controller extends BaseController {
                 attendSession.statusAttend = "CHECKIN";
 
             }
-        } else if (_time >= moment("21:00", "HH:mm") || _time <= moment("03:00", "HH:mm")) {
+        } else if (_time >= moment("22:00", "HH:mm") || _time <= moment("03:00", "HH:mm")) {
             // Attend status is CHECKOUT
             attendSession.sessionNumber = 3;
             attendSession.statusAttend = "CHECKOUT";
@@ -130,6 +139,30 @@ class Controller extends BaseController {
             attendSession.statusAttend = "ABNORMAL";
         }
         return attendSession;
+    }
+
+    getCheckInToday = (sessionsAttends: ISessionAttend[]) => {
+        const result = _.filter(sessionsAttends, {statusAttend: "CHECKIN"})[0];
+        return result;
+    }
+
+    getCheckOutToday = (sessionsAttends: ISessionAttend[], checkInSession?: ISessionAttend) => {
+        let result: ISessionAttend;
+        if (checkInSession) {
+            result = _.filter(sessionsAttends, (sessionAttend) => {
+                const _sessionTime = (sessionAttend.hour).toString() + ":" + (sessionAttend.minute).toString();
+                const _checkInSessionTime = (checkInSession.hour).toString() + ":" + (checkInSession.minute).toString();
+                return sessionAttend.statusAttend == "CHECKOUT" 
+                && moment(_sessionTime, "HH:mm") > moment(_checkInSessionTime, "HH:mm");
+            })[0];
+        } else {
+            result = _.filter(sessionsAttends, (sessionAttend) => {
+                const _sessionTime = (sessionAttend.hour).toString() + ":" + (sessionAttend.minute).toString();
+                return sessionAttend.statusAttend == "CHECKOUT"
+                && moment(_sessionTime, "HH:mm") > moment("12:01", "HH:mm");
+            })[0];
+        }
+        return result;
     }
 
 

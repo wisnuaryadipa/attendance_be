@@ -1,5 +1,5 @@
 import {Sequelize} from 'Sequelize';
-import config from '../config/sequelize'
+import config from '@src/config/sequelize'
 
 
 export default () => {

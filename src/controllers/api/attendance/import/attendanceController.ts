@@ -15,7 +15,6 @@ interface ISessionAttend {
 
 class Controller extends BaseController {
 
-
     requestHandler = async (req: Request, res: Response) => {
         // this.sendResponse(req, res, {data: req.file});
         let option: IOptions = {};

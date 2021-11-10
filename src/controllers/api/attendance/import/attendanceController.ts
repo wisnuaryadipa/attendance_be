@@ -11,9 +11,7 @@ interface ISessionAttend {
     hour: number,
     minute: number,
     statusAttend: "CHECKIN"|"CHECKOUT"|"ABNORMAL",
-
 }
-type ISessionAttends = ISessionAttend[];
 
 class Controller extends BaseController {
 
@@ -29,38 +27,13 @@ class Controller extends BaseController {
             } else {
                 let attendanceJson = this.parseExcelToJson(req.file);
 
-                attendanceJson.map((attendanced:any, index) => {
-
-                    let removedDuplicAttend:[] = [];
-                    let listAttend:ISessionAttend[] = [];
-                    if (attendanced.Time) {
-                        // check if there any attend recorded
-                        // then removing all duplicate attendance record
-                        let arrRegisAttendanced = attendanced.Time.split(' ');
-                        removedDuplicAttend = this.removeDuplicateAttendant(arrRegisAttendanced);
-                    }
-                    removedDuplicAttend.forEach((timeAttend, index) => {
-                        // create sessionAttend object from attendance record
-                        let sessionAttend = this.identifySession(timeAttend, removedDuplicAttend[index-1]);
-                        listAttend.push(sessionAttend);
-                    })
-
-                    let checkInToday = this.getCheckInToday(listAttend);
-                    let checkOutToday = this.getCheckOutToday(listAttend, checkInToday);
-
-                    attendanced.checkIn = "";
-                    attendanced.checkOut = "";
-                    attendanced.checkInStatus = checkInToday;
-                    attendanced.checkOutStatus = checkOutToday;
-                    attendanced.workDuration = removedDuplicAttend;
-                    attendanced.listTimeAttend = listAttend;
-
-                    return attendanced;
-                })
-
+                let attendJson = this.initiateAttendJson(attendanceJson);
+                attendJson = this.identifyCheckInOutToday(attendJson)
+                attendJson = this.addWorkDurationPropertiy(attendJson);
+            
                 option.status = 200;
                 option.message = "success";
-                option.data = attendanceJson;
+                option.data = attendJson;
                 this.sendResponse(req, res, option);
             }
         }
@@ -71,6 +44,71 @@ class Controller extends BaseController {
             this.sendResponse(req, res, option);
         }
         
+    }
+
+    initiateAttendJson = (attendancesJson) => {
+        
+        attendancesJson.map((attendanced:any, index) => {
+
+            let removedDuplicAttend:[] = [];
+            let listAttend:ISessionAttend[] = [];
+            if (attendanced.Time) {
+                // check if there any attend recorded
+                // then removing all duplicate attendance record
+                let arrRegisAttendanced = attendanced.Time.split(' ');
+                removedDuplicAttend = this.removeDuplicateAttendant(arrRegisAttendanced);
+            }
+            removedDuplicAttend.forEach((timeAttend, index) => {
+                // create sessionAttend object from attendance record
+                let sessionAttend = this.identifySession(timeAttend, removedDuplicAttend[index-1]);
+                listAttend.push(sessionAttend);
+            })
+
+            attendanced.checkIn = null;
+            attendanced.checkOut = null;
+            attendanced.checkInStatus = null;
+            attendanced.checkOutStatus = null;
+            attendanced.workDuration = null;
+            attendanced.listTimeAttend = listAttend;
+
+            return attendanced;
+        });
+
+        return attendancesJson
+    }
+    
+    identifyCheckInOutToday = (attendancesJson) => {
+        attendancesJson.map((attendanced:any, index) => {
+            
+            let checkInToday = this.getCheckInToday(attendanced);
+            let checkOutToday = this.getCheckOutToday(attendanced, attendancesJson[index+1], checkInToday);
+            attendanced.checkIn = checkInToday ? moment(checkInToday.hour + ":" + checkInToday.minute, "HH:mm") : null;
+            attendanced.checkOut = checkOutToday ? moment(checkOutToday.hour + ":" + checkOutToday.minute, "HH:mm") : null;
+            attendanced.checkInStatus = (checkInToday) ? "CHECK IN" : "NOT CHECK IN";
+            attendanced.checkOutStatus = (checkOutToday) ? "CHECK OUT" : "NOT CHECK OUT";
+
+            return attendanced;
+        })
+        return attendancesJson;
+    }
+
+    addWorkDurationPropertiy = (attendancesJson) => {
+        // count employees work duration everyday
+        // and add checkOut information when employee checkout by next day.
+        attendancesJson.map((attendanceJson, index) => {
+            const checkIn = moment(attendanceJson.checkIn);
+            const checkOut = moment(attendanceJson.checkOut);
+
+            if (checkIn.isBefore(checkOut)) {
+                const diffTime = checkOut.diff(checkIn, 'minutes');
+                attendanceJson.workDuration = diffTime;
+            } else {
+                const diffTime = checkOut.add(1, "day").diff(checkIn, 'minutes');
+                attendanceJson.workDuration = diffTime;
+            }
+            return attendanceJson;
+        })
+        return attendancesJson;
     }
 
     parseExcelToJson = (excelFile: Express.Multer.File) => {
@@ -100,12 +138,6 @@ class Controller extends BaseController {
         return arrFilteredTimeAttends;
     }
 
-    generateSessionAttend = (arrTimeAttends: [string]) => {
-        arrTimeAttends.forEach((timeAttend, index) => {
-
-        })
-    }
-
     identifySession = (timeAttend: string, prefAttend: string) => {
         const _time = moment(timeAttend, "HH.mm");
         const _prefAttend = moment(prefAttend, "HH:mm");
@@ -123,12 +155,10 @@ class Controller extends BaseController {
                 // Attend status is CHECKOUT
                 attendSession.sessionNumber = 2;
                 attendSession.statusAttend = "CHECKOUT";
-
             } else {
                 // Attend status is CHECKIN
                 attendSession.sessionNumber = 2;
                 attendSession.statusAttend = "CHECKIN";
-
             }
         } else if (_time >= moment("22:00", "HH:mm") || _time <= moment("03:00", "HH:mm")) {
             // Attend status is CHECKOUT
@@ -141,30 +171,58 @@ class Controller extends BaseController {
         return attendSession;
     }
 
-    getCheckInToday = (sessionsAttends: ISessionAttend[]) => {
-        const result = _.filter(sessionsAttends, {statusAttend: "CHECKIN"})[0];
+    getCheckInToday = (attendanceJson: any) => {
+        const result = _.filter(attendanceJson.listTimeAttend, {statusAttend: "CHECKIN"})[0];
         return result;
     }
 
-    getCheckOutToday = (sessionsAttends: ISessionAttend[], checkInSession?: ISessionAttend) => {
+    getCheckOutToday = (attendanceJson: any, attendanceJsonNextDay: any, checkInSession?: ISessionAttend) => {
         let result: ISessionAttend;
         if (checkInSession) {
-            result = _.filter(sessionsAttends, (sessionAttend) => {
+            // Condition when employees make checkedIn attendance
+            result = _.filter(attendanceJson.listTimeAttend, (sessionAttend) => {
                 const _sessionTime = (sessionAttend.hour).toString() + ":" + (sessionAttend.minute).toString();
                 const _checkInSessionTime = (checkInSession.hour).toString() + ":" + (checkInSession.minute).toString();
                 return sessionAttend.statusAttend == "CHECKOUT" 
                 && moment(_sessionTime, "HH:mm") > moment(_checkInSessionTime, "HH:mm");
             })[0];
+
+            if (!result) {
+                // Condition to handle is employee checkout tomorrow 
+                if (attendanceJsonNextDay) {
+                    result = _.filter(attendanceJsonNextDay.listTimeAttend, (sessionAttend) => {
+                        const _sessionTime = (sessionAttend.hour).toString() + ":" + (sessionAttend.minute).toString();
+                        return sessionAttend.statusAttend == "CHECKOUT" 
+                        && moment(_sessionTime, "HH:mm") <= moment("03:00", "HH:mm")
+                        && attendanceJsonNextDay["AC-No"] == attendanceJson["AC-No"];
+    
+                    })[0];
+                }
+            }
         } else {
-            result = _.filter(sessionsAttends, (sessionAttend) => {
+            // Condition when the employees does not make a checkIn attendance,
+            // Prevent if employee forget to make checkIn
+            result = _.filter(attendanceJson.listTimeAttend, (sessionAttend) => {
                 const _sessionTime = (sessionAttend.hour).toString() + ":" + (sessionAttend.minute).toString();
                 return sessionAttend.statusAttend == "CHECKOUT"
                 && moment(_sessionTime, "HH:mm") > moment("12:01", "HH:mm");
             })[0];
+
+            if (!result) {
+                // Condition to handle is employee checkout tomorrow 
+                if (attendanceJsonNextDay) {
+                    result = _.filter(attendanceJsonNextDay.listTimeAttend, (sessionAttend) => {
+                        const _sessionTime = (sessionAttend.hour).toString() + ":" + (sessionAttend.minute).toString();
+                        return sessionAttend.statusAttend == "CHECKOUT" 
+                        && moment(_sessionTime, "HH:mm") <= moment("03:00", "HH:mm")
+                        && attendanceJsonNextDay["AC-No"] == attendanceJson["AC-No"];
+    
+                    })[0];
+                }
+            }
         }
         return result;
     }
-
 
 }
 

@@ -1,19 +1,20 @@
 import express, {Request, Response} from 'express';
 import { BaseController } from '@src/controllers/api';
-import {IOptions} from '@src/interfaces/IResponse'
-import employeeServices from '@src/services/employee';
+import { IOptions } from '@src/interfaces/IResponse';
+import service from '@src/services/employee';
 
 class EmployeeController extends BaseController {
 
 
     requestHandler = async (req: Request, res: Response) => {
         let option: IOptions = {};
-        let employeeId = parseInt(req.params.id);
+        let divisionId = parseInt(req.params.divisionId);
         try {
 
-            const data = await employeeServices.getEmployeeById(employeeId);
+            const data = await service.getEmployeeByDivision(divisionId);
             option.data = data;
             option.status= 500;
+
             
         } catch (err) {
             console.log(err);
@@ -21,6 +22,7 @@ class EmployeeController extends BaseController {
             option.message = "Could not upload the file";
         }
 
+        this.sendResponse(req, res, option);
     }
 }
 

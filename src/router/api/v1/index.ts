@@ -6,5 +6,6 @@ import multer from 'multer';
 const v1 = Router();
 
 v1.post('/status', multer().single('file'), controller.apiControllers.importAttendanceController.requestHandler);
+v1.get('/master/employee/get-all', multer().single('file'), controller.apiControllers.attendanceControllers.master.employee.getAll.requestHandler);
 
 export default v1;

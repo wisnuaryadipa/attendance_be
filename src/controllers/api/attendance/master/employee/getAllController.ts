@@ -1,6 +1,7 @@
 import express, {Request, Response} from 'express';
 import { BaseController } from '@src/controllers/api';
 import { IOptions } from '@src/interfaces/IResponse';
+import service from '@src/services/employee';
 
 class EmployeeController extends BaseController {
 
@@ -9,8 +10,9 @@ class EmployeeController extends BaseController {
         let option: IOptions = {};
         try {
 
-            
-            
+            const data = await service.getEmployees();
+            option.data = data;
+            option.status= 500;
 
             
         } catch (err) {
@@ -18,8 +20,6 @@ class EmployeeController extends BaseController {
             option.status = 500;
             option.message = "Could not upload the file";
         }
-            
-
 
         this.sendResponse(req, res, option);
     }

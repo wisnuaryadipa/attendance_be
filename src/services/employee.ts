@@ -1,5 +1,6 @@
 import express from 'express';
 import models from '@src/models/postgresql';
+import { IEmployee } from '@src/interfaces/db/IEmployee';
 
 
 class EmployeeService {
@@ -15,7 +16,7 @@ class EmployeeService {
         return await models.tm_employee.findAll({ where: {division: divisionId}});
     }
 
-    updateEmployee = async (employeeId: number) => {
+    updateEmployee = async (employee: IEmployee) => {
         
     }
     

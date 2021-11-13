@@ -1,7 +1,10 @@
-import {DataTypes, Sequelize} from 'sequelize';
+import {DataTypes, Sequelize, ModelCtor, Model} from 'sequelize';
+import {IAttendanceMachine} from '@src/interfaces/db/IAttendanceMachine'
+
+export interface AttendanceMachineInstance extends Model, IAttendanceMachine {}
 
 const AttendanceMachine = (sequelize: Sequelize) => {
-    const AttendanceMachine = sequelize.define('tm_attendance_machine', {
+    const AttendanceMachine = sequelize.define<AttendanceMachineInstance>('tm_attendance_machine', {
         name: {
           type: DataTypes.STRING,
           allowNull: false

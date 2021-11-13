@@ -11,6 +11,8 @@ class DivisionService {
     }
 
     addDivision = (division: IBaseDivision) => {
-        
+        return model.tm_division.create(division);
     }
 }
+
+export default new DivisionService();

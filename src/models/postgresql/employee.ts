@@ -1,7 +1,10 @@
-import {DataTypes, Sequelize} from 'sequelize';
+import {DataTypes, Sequelize, Model} from 'sequelize';
+import {IEmployee} from '@src/interfaces/db/IEmployee';
+
+interface EmployeeInstance extends Model, IEmployee {}
 
 const Employee = (sequelize: Sequelize) => {
-    const Employee = sequelize.define('tm_employee', {
+    const Employee = sequelize.define<EmployeeInstance>('tm_employee', {
         name: {
           type: DataTypes.STRING,
           allowNull: false

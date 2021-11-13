@@ -1,7 +1,11 @@
-import {DataTypes, Sequelize} from 'sequelize';
+import {DataTypes, Sequelize, Model} from 'sequelize';
+import {IDivision} from '@src/interfaces/db/IDivision';
+
+interface DivisionInstance extends Model, IDivision {}
+
 
 const Division = (sequelize: Sequelize) => {
-    const Division = sequelize.define('tm_division', {
+    const Division = sequelize.define<DivisionInstance>('tm_division', {
         name: {
           type: DataTypes.STRING,
           allowNull: false

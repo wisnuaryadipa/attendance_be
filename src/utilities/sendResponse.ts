@@ -6,14 +6,7 @@ import {IOptions, IDataToSend} from 'src/interfaces/IResponse';
 const sendResponse = (
     req: Request,
     res: Response,
-    option: {
-      data?: any
-      flag?: string
-      message?: string
-      error?: Error
-      joiError?: Joi.ValidationError
-      status?: 200 | 400 | 401 | 500
-    } = {
+    option: IOptions = {
       data: null,
     },
   ) => {

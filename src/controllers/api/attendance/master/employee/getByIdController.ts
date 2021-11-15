@@ -14,6 +14,7 @@ class EmployeeController extends BaseController {
             const data = await employeeServices.getEmployeeById(employeeId);
             option.data = data;
             option.status= 500;
+
             
         } catch (err) {
             console.log(err);

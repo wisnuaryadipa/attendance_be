@@ -2,6 +2,7 @@ import express, {Request, Response} from 'express';
 import { BaseController } from '@src/controllers/api';
 import { IOptions } from '@src/interfaces/IResponse';
 import service from '@src/services/employee';
+import model from '@src/models/postgresql/index'
 
 class EmployeeController extends BaseController {
 
@@ -12,7 +13,7 @@ class EmployeeController extends BaseController {
 
             const data = await service.getEmployees();
             option.data = data;
-            option.status= 500;
+            option.status= 200;
 
             
         } catch (err) {

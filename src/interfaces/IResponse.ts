@@ -6,7 +6,7 @@ interface IOptions {
     message?: string;
     error?: Error;
     joiError?: Joi.ValidationError;
-    status?: 200 | 400 | 401 | 500;
+    status?: 200 | 201 | 400 | 401 | 500;
 }
 
 interface IDataToSend {

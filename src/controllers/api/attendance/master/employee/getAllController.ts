@@ -8,7 +8,7 @@ class EmployeeController extends BaseController {
 
 
     requestHandler = async (req: Request, res: Response) => {
-        let option: IOptions = {};
+        const option: IOptions = {};
         try {
 
             const data = await service.getEmployees();

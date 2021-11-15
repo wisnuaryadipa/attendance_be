@@ -7,6 +7,7 @@ const v1 = Router();
 
 v1.post('/status', multer().single('file'), controller.apiControllers.importAttendanceController.requestHandler);
 v1.get('/master/employee/get-all', controller.apiControllers.attendanceControllers.master.employee.getAll.requestHandler);
+v1.get('/master/division/get-all', controller.apiControllers.attendanceControllers.master.division.getAll.requestHandler);
 
 
 v1.post('/master/division/add', controller.apiControllers.attendanceControllers.master.division.addOne.requestHandler);

@@ -9,27 +9,28 @@ import ApplicationError from '@src/errors/application-error';
 
 class Division extends BaseController {
     requestValidationSchema = {
-        body: Joi.object({}).required(),
-        query: Joi.object({
+        body: Joi.object({
             name: Joi.string().required(),
         }).required(),
+        query: Joi.object({}).required(),
         header: Joi.object({}).required().unknown(),
         params: Joi.object({}).required()
     }
 
     requestHandler = async (req: Request, res: Response) => {
-        let option: IOptions = {};
+        const option: IOptions = {};
         try { 
-            let _reqValidate = await this.validateRequest(req)
-            const { name } = _reqValidate.query;
-            let newDivision: IBaseDivision = {
+            const _reqValidate = await this.validateRequest(req)
+            const { name } = _reqValidate.body;
+            const newDivision: IBaseDivision = {
                 name: name!.toString(),
-                createdAt: moment().toDate(),
-                updatedAt: moment().toDate(),
+                createdAt: new Date(moment().format('YYYY-MM-DD HH:mm:ss')),
+                updatedAt: new Date(moment().format('YYYY-MM-DD HH:mm:ss')),
                 status: 1
             };
 
-            option.data = newDivision;
+            const result = await services.division.addDivision(newDivision)
+            option.data = result;
             option.status = 201;
             
         } catch(err: any) {

@@ -12,4 +12,6 @@ v1.get('/master/division/get-all', controller.apiControllers.attendanceControlle
 
 v1.post('/master/division/add', controller.apiControllers.attendanceControllers.master.division.addOne.requestHandler);
 
+v1.post('/master/division/edit/:id', controller.apiControllers.attendanceControllers.master.division.edit.requestHandler);
+
 export default v1;

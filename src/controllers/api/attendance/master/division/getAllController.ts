@@ -10,20 +10,19 @@ import ApplicationError from '@src/errors/application-error';
 class Division extends BaseController {
 
     requestHandler = async (req: Request, res: Response) => {
-        const option: IOptions = {};
         try { 
             
             const data = await services.division.getDivisions();
-            option.data = data;
-            option.status = 201;
+            this.responseOption.data = data;
+            this.responseOption.status = 201;
             
         } catch(err: any) {
             console.log(err);
-            option.status = 500;
-            option.message = err;
+            this.responseOption.status = 500;
+            this.responseOption.message = err;
         }
         
-        this.sendResponse(req, res, option);
+        this.sendResponse(req, res, this.responseOption);
     }
 }
 

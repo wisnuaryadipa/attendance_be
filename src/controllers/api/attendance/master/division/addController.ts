@@ -18,7 +18,6 @@ class Division extends BaseController {
     }
 
     requestHandler = async (req: Request, res: Response) => {
-        const option: IOptions = {};
         try { 
             const _reqValidate = await this.validateRequest(req)
             const { name } = _reqValidate.body;
@@ -30,16 +29,16 @@ class Division extends BaseController {
             };
 
             const result = await services.division.addDivision(newDivision)
-            option.data = result;
-            option.status = 201;
+            this.responseOption.data = result;
+            this.responseOption.status = 201;
             
         } catch(err: any) {
             console.log(err);
-            option.status = 500;
-            option.message = err;
+            this.responseOption.status = 500;
+            this.responseOption.message = err;
         }
         
-        this.sendResponse(req, res, option);
+        this.sendResponse(req, res, this.responseOption);
     }
 }
 

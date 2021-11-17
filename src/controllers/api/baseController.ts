@@ -3,6 +3,7 @@ import Joi from 'joi';
 import sendResponse from '@src/utilities/sendResponse';
 import errorCode from '@src/errors/flags';
 import ApplicationError from '@src/errors/application-error'
+import {IOptions} from '@src/interfaces/IResponse'
 
 
 class IRequestValidationSchema {
@@ -28,6 +29,7 @@ export class BaseController {
     requestHandler!: RequestHandler;
     validation: IRequestValidationSchema = {};
     requestValidationSchema!: IRequestValidationSchema;
+    responseOption: IOptions = {status: 500, message: "Error !, something wrong in your input parameter or problem on server. "};
     
     validateRequest = async (req: Request) => {
         let { body, headers, params, query} = req;

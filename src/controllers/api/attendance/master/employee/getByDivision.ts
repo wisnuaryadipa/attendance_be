@@ -16,23 +16,22 @@ class EmployeeController extends BaseController {
     }
 
     requestHandler = async (req: Request, res: Response) => {
-        const option: IOptions = {};
         const validateRequest = await this.validateRequest(req);
         const {id} = await validateRequest.body;
         try {
 
             const data = await service.getEmployeeByDivision(id);
-            option.data = data;
-            option.status= 500;
+            this.responseOption.data = data;
+            this.responseOption.status= 500;
 
             
         } catch (err) {
             console.log(err);
-            option.status = 500;
-            option.message = "Could not upload the file";
+            this.responseOption.status = 500;
+            this.responseOption.message = "Could not upload the file";
         }
 
-        this.sendResponse(req, res, option);
+        this.sendResponse(req, res, this.responseOption);
     }
 }
 

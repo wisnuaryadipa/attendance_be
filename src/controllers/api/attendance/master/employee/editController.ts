@@ -36,7 +36,10 @@ class Employee extends BaseController {
             
             if (!_employee) { 
 
-                throw new ApplicationError({ message: ErrorCol.errMessages.FIND_NULL_ON_DB, flag: ErrorCol.errFlags.REF_NOT_FOUND })
+                throw new ApplicationError({ 
+                    message: ErrorCol.errMessages.FIND_NULL_ON_DB, 
+                    flag: ErrorCol.errFlags.REF_NOT_FOUND 
+                })
 
             } else {
 
@@ -48,13 +51,22 @@ class Employee extends BaseController {
                 _employee.updatedAt = moment().toDate();
                 const result = await _employee.save();
 
-                this.responseOption.data = result;
-                this.responseOption.status = 201;
+                this.responseOption = {
+                    ...this.responseOption, 
+                    data:result, 
+                    status: 201,
+                    message: "Success!"
+                }
             }
 
 
         } catch (err:any) {
 
+            this.responseOption = {
+                ...this.responseOption, 
+                message:err, 
+                status: 500
+            }
         }
     }
 }

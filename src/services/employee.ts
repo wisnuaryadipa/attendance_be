@@ -1,6 +1,6 @@
 import express from 'express';
 import models from '@src/models/postgresql';
-import { IEmployee } from '@src/interfaces/db/IEmployee';
+import { IEmployee, IBaseEmployee } from '@src/interfaces/db/IEmployee';
 
 
 class EmployeeService {
@@ -18,6 +18,10 @@ class EmployeeService {
 
     updateEmployee = async (employee: IEmployee) => {
         
+    }
+
+    addEmployee = (employee: IBaseEmployee) => {
+        return models.tm_employee.create(employee);
     }
     
 }

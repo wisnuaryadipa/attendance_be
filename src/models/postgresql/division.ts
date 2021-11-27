@@ -3,7 +3,6 @@ import {IDivision} from '@src/interfaces/db/IDivision';
 
 interface DivisionInstance extends Model, IDivision {}
 
-
 const Division = (sequelize: Sequelize) => {
     const Division = sequelize.define<DivisionInstance>('tm_division', {
         name: {

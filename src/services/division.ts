@@ -2,20 +2,20 @@ import model from '@src/models/postgresql';
 import {IBaseDivision, IDivision} from '@src/interfaces/db/IDivision';
 
 class DivisionService {
-    getDivisions = () => {
-        return model.tm_division.findAll();
+    getDivisions = async () => {
+        return await model.tm_division.findAll();
     };
 
-    getDivisionById = (divisionId: number) => {
-        return model.tm_division.findOne({where: {id: divisionId}});
+    getDivisionById = async (divisionId: number) => {
+        return await model.tm_division.findOne({where: {id: divisionId}});
     }
 
-    addDivision = (division: IBaseDivision) => {
-        return model.tm_division.create(division);
+    addDivision = async (division: IBaseDivision) => {
+        return await model.tm_division.create(division);
     }
 
-    editDivision = (division: IDivision) => {
-        return model.tm_division.update(division, { where: {id: division.id}});
+    editDivision = async (division: IDivision) => {
+        return await model.tm_division.update(division, { where: {id: division.id}});
     }
 }
 

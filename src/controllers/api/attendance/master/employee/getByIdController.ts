@@ -22,14 +22,21 @@ class EmployeeController extends BaseController {
         try {
 
             const data = await employeeServices.getEmployeeById(id);
-            this.responseOption.data = data;
-            this.responseOption.status= 500;
+            this.responseOption = {
+                ...this.responseOption, 
+                data:data, 
+                status: 201,
+                message: "Success!"
+            }
 
             
-        } catch (err) {
+        } catch (err: any) {
             console.log(err);
-            this.responseOption.status = 500;
-            this.responseOption.message = "Could not upload the file";
+            this.responseOption = {
+                ...this.responseOption, 
+                message: err, 
+                status: 500
+            }
         }
 
     }

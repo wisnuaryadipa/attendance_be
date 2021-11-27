@@ -21,6 +21,11 @@ const Employee = (sequelize: Sequelize) => {
           type: DataTypes.NUMBER,
           allowNull: true,
         },
+        machineId: {
+          type: DataTypes.NUMBER,
+          allowNull: true,
+          field: 'machine_id'
+        },
         createdAt: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,

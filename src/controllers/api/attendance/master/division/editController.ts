@@ -33,7 +33,10 @@ class Division extends BaseController {
 
             if (!_data) { 
 
-                throw new ApplicationError({ message: ErrorMessage.FIND_NULL_ON_DB, flag: errorCode.REF_NOT_FOUND })
+                throw new ApplicationError({ 
+                    message: ErrorMessage.FIND_NULL_ON_DB, 
+                    flag: errorCode.REF_NOT_FOUND 
+                })
 
             } else {
                 
@@ -41,16 +44,22 @@ class Division extends BaseController {
                 _data.status = status ? status : _data.status;
                 _data.updatedAt = moment().toDate();
                 const result = await _data.save();
-                
-                this.responseOption.data = result;
-                this.responseOption.status = 201;
+                this.responseOption = {
+                    ...this.responseOption, 
+                    data:result, 
+                    status: 201,
+                    message: "Success!"
+                }
 
             }
         } catch (err: any) {
             
             console.log(err);
-            this.responseOption.status = 500;
-            this.responseOption.message = err;
+            this.responseOption = {
+                ...this.responseOption, 
+                message:err, 
+                status: 500
+            }
 
         }
         this.sendResponse(req, res, this.responseOption);

@@ -23,14 +23,21 @@ class Division extends BaseController {
             const _reqValidate = await this.validateRequest(req)
             const { id } = _reqValidate.body;
             const data = await services.division.getDivisionById(id);
-            this.responseOption.data = data;
-            this.responseOption.status = 201;
+            this.responseOption = {
+                ...this.responseOption, 
+                data:data, 
+                status: 201,
+                message: "Success!"
+            }
 
         } catch(err: any) {
 
             console.log(err);
-            this.responseOption.status = 500;
-            this.responseOption.message = err;
+            this.responseOption = {
+                ...this.responseOption, 
+                message:err, 
+                status: 500
+            }
 
         }
         

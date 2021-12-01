@@ -5,7 +5,7 @@ import { IEmployee, IBaseEmployee } from '@src/interfaces/db/IEmployee';
 
 class EmployeeService {
     getEmployees = async () => {
-        return await models.tm_employee.findAll();
+        return await models.tm_employee.findAll({order:[['machine_id', 'ASC']]});
     }
 
     getEmployeeById = async (employeeId: number) => {
@@ -20,8 +20,8 @@ class EmployeeService {
         
     }
 
-    addEmployee = (employee: IBaseEmployee) => {
-        return models.tm_employee.create(employee);
+    addEmployee = async (employee: IBaseEmployee) => {
+        return await models.tm_employee.create(employee);
     }
     
 }

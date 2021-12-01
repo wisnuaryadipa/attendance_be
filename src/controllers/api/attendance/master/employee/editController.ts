@@ -47,7 +47,7 @@ class Employee extends BaseController {
                 _employee.role = (role) ? role : _employee.role;
                 _employee.division = (division) ? division : _employee.division;
                 _employee.status = (status) ? status : _employee.status;
-                _employee.machine_id = (machineId) ? machineId : _employee.machine_id;
+                _employee.machineId = (machineId) ? machineId : _employee.machineId;
                 _employee.updatedAt = moment().toDate();
                 const result = await _employee.save();
 

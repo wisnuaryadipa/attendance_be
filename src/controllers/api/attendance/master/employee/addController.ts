@@ -11,8 +11,8 @@ class Employee extends BaseController {
     requestValidationSchema = {
         body: Joi.object({
             name: Joi.string().required(),
-            role: Joi.number().required(),
-            division: Joi.number(). required(),
+            role: Joi.number(),
+            division: Joi.number(),
             machineId: Joi.number().required(),
         }).required(),
         query: Joi.object({}).required(),
@@ -26,9 +26,9 @@ class Employee extends BaseController {
             const { name, role, division, machineId } = _reqValidate.body;
             const newEmployee: IBaseEmployee = {
                 name: name,
-                role: role,
-                division: division,
-                machine_id: machineId,
+                role: role ? role : 0,
+                division: division ? division : 0,
+                machineId: machineId,
                 createdAt: new Date(moment().format('YYYY-MM-DD HH:mm:ss')),
                 updatedAt: new Date(moment().format('YYYY-MM-DD HH:mm:ss')),
                 status: 1

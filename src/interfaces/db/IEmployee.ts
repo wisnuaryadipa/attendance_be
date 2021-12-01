@@ -5,7 +5,7 @@ export interface IBaseEmployee {
     createdAt: Date;
     updatedAt: Date;
     status: number;
-    machine_id: number;
+    machineId: number;
 }
 
 export interface IEmployee extends IBaseEmployee {

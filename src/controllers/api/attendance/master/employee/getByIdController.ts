@@ -7,21 +7,21 @@ import Joi from 'joi';
 class EmployeeController extends BaseController {
 
     requestValidationSchema = {
-        body: Joi.object({
-            name: Joi.string().required(),
-        }).required(),
+        body: Joi.object({}).required(),
         query: Joi.object({}).required(),
         header: Joi.object({}).required().unknown(),
-        params: Joi.object({}).required()
+        params: Joi.object({
+            id: Joi.string().required(),
+        }).required()
     }
 
     requestHandler = async (req: Request, res: Response) => {
         const validateRequest = await this.validateRequest(req);
-        const {id} = validateRequest.body;
+        const {id} = validateRequest.params;
 
         try {
 
-            const data = await employeeServices.getEmployeeById(id);
+            const data = await employeeServices.getEmployeeById(parseInt(id));
             this.responseOption = {
                 ...this.responseOption, 
                 data:data, 
@@ -38,6 +38,8 @@ class EmployeeController extends BaseController {
                 status: 500
             }
         }
+
+        this.sendResponse(req, res, this.responseOption);
 
     }
 }

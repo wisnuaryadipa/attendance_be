@@ -9,20 +9,20 @@ import ApplicationError from '@src/errors/application-error';
 
 class Division extends BaseController {
     requestValidationSchema = {
-        body: Joi.object({
-            name: Joi.number().required()
-        }).required(),
+        body: Joi.object({}).required(),
         query: Joi.object({}).required(),
         header: Joi.object({}).required().unknown(),
-        params: Joi.object({}).required()
+        params: Joi.object({
+            id: Joi.number().required()
+        }).required()
     }
 
     requestHandler = async (req: Request, res: Response) => {
         try { 
 
             const _reqValidate = await this.validateRequest(req)
-            const { id } = _reqValidate.body;
-            const data = await services.division.getDivisionById(id);
+            const { id } = _reqValidate.params;
+            const data = await services.division.getDivisionById(parseInt(id));
             this.responseOption = {
                 ...this.responseOption, 
                 data:data, 

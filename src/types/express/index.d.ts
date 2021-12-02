@@ -5,5 +5,7 @@ declare global {
         export interface Request {
           currentUser: string;
         }    
+
+        export type Nullable<T> = T | undefined | null;
       }
 }

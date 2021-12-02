@@ -18,10 +18,10 @@ const sequelize : any = {
         "freezeTableName": true
     },
     "pool": {
-      "max": 30,
+      "max": 10,
       "min": 0,
-      "acquire": 1000000000,
-      "idle": 10000000
+      "acquire": 20000,
+      "idle": 20000
     }
 }
 

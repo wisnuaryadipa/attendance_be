@@ -36,6 +36,46 @@ const Employee = (sequelize: Sequelize) => {
             defaultValue: DataTypes.NOW,
             field: 'updated_at'
         },
+        positionId: {
+            type: DataTypes.NUMBER,
+            field: 'position_id'
+        },
+        gender: {
+            type: DataTypes.STRING,
+            field: 'gender'
+        },
+        employeeStatus: {
+            type: DataTypes.STRING,
+            field: 'employuee_status'
+        },
+        hireDate: {
+            type: DataTypes.DATE,
+            field: 'hire_date'
+        },
+        dateOfBirth: {
+            type: DataTypes.DATE,
+            field: 'date_of_birth'
+        },
+        address: {
+            type: DataTypes.STRING,
+            field: 'address'
+        },
+        contactNumber: {
+            type: DataTypes.STRING,
+            field: 'contact_number'
+        },
+        email: {
+            type: DataTypes.STRING,
+            field: 'email'
+        },
+        employeeCode: {
+            type: DataTypes.STRING,
+            field: 'employee_code'
+        },
+        description: {
+            type: DataTypes.STRING,
+            field: 'description'
+        },
       }, {
         // Another option
       });

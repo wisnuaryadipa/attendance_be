@@ -10,6 +10,10 @@ import errorCode from '@src/errors/flags';
 import moment from 'moment';
 
 
+interface IReqBody {
+    name: string;
+    status: number;
+}
 class Division extends BaseController {
 
     requestValidationSchema = {
@@ -27,11 +31,11 @@ class Division extends BaseController {
     requestHandler = async (req: Request, res: Response) => {
         try {
             const _validatedData = await this.validateRequest(req);
-            const { name, status } = _validatedData.body;
+            const _body: IReqBody = _validatedData.body;
             const { id } = _validatedData.params;
-            const _data = await services.division.getDivisionById(parseInt(id))
+            const _division = await services.division.getDivisionById(parseInt(id))
 
-            if (!_data) { 
+            if (!_division) { 
 
                 throw new ApplicationError({ 
                     message: ErrorMessage.FIND_NULL_ON_DB, 
@@ -40,10 +44,12 @@ class Division extends BaseController {
 
             } else {
                 
-                _data.name = name ? name : _data.name;
-                _data.status = status ? status : _data.status;
-                _data.updatedAt = moment().toDate();
-                const result = await _data.save();
+                for (const key in _body) {
+                    _body[key] && (_division[key] = _body[key]);
+                }
+                _division.updatedAt = moment().toDate();
+                const result = await _division.save();
+
                 this.responseOption = {
                     ...this.responseOption, 
                     data:result, 

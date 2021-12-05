@@ -53,8 +53,12 @@ class Controller extends BaseController {
             _attendance.attendanceStatus = 1;
             _attendance.employeeId = attendance['AC-No'];
             _attendance.attendanceTime = attendance.Time ? attendance.Time : null;
-            _attendance.checkIn = attendance.checkIn ? moment(attendance.checkIn, 'DD/MM/YYYY HH:mm').toDate() : null;
-            _attendance.checkOut = attendance.checkOut ? moment(attendance.checkOut, 'DD/MM/YYYY HH:mm').toDate() : null;
+            _attendance.checkIn = attendance.checkIn 
+            ? moment(attendance.checkIn, 'DD/MM/YYYY HH:mm').toDate() 
+            : null;
+            _attendance.checkOut = attendance.checkOut 
+            ? moment(attendance.checkOut, 'DD/MM/YYYY HH:mm').toDate() 
+            : null;
             _attendance.date = attendance.Date;
             _attendance.visible = 1;
             _attendance.createdAt = moment().toDate();
@@ -67,23 +71,34 @@ class Controller extends BaseController {
         for await (const attendance of attendances) {
             let _attendance: IBaseAttendance = passAttendanceToType(attendance);
 
-            const prevDate: string = moment(attendance.Date, 'DD/MM/YYYY').subtract('1', 'days').format('DD/MM/YYYY');
+            const prevDate: string = moment(attendance.Date, 'DD/MM/YYYY')
+            .subtract('1', 'days')
+            .format('DD/MM/YYYY');
+            
+            const earlyDayCheckout = this.findCheckOutYesterday(attendance.listTimeAttend) 
 
-            const earlyDayCheckout = _.filter(attendance.listTimeAttend, (sessionAttend) => {
-                const _sessionTime = `${sessionAttend.hour.toString()}:${sessionAttend.minute.toString()}`;
-                return sessionAttend.statusAttend == "CHECKOUT" 
-                && moment(_sessionTime, "HH:mm") <= moment("03:00", "HH:mm");
-            })[0];
+            // const currentDateCheck = await services.attendance.getAttendanceByDateEmployeeId(attendance['AC-No'], attendance.Date)
 
-            const currentDateCheck = await services.attendance.getAttendanceByDateEmployeeId(attendance['AC-No'], attendance.Date)
-
-            if(!currentDateCheck) {
-                const storing = await services.attendance.addAttendance(_attendance);
-            }
+            // if(!currentDateCheck) {
+                // const storing = await services.attendance.addAttendance(_attendance);
+            // }
 
             if(earlyDayCheckout){
-                // const prevAttendance = await services.attendance.getAttendanceByDateEmployeeId(attendance['AC-No'], prevDate);
-                // console.log(prevAttendance);
+                const prevAttendance = await services.attendance
+                .getAttendanceByDateEmployeeId(attendance['AC-No'], prevDate);
+                if(prevAttendance){
+                    prevAttendance.checkOut = this.convertDateStringToISO(
+                        _attendance.date, 
+                        earlyDayCheckout.hour, 
+                        earlyDayCheckout.minute)
+                    prevAttendance.workDuration = this.countWorkDuration(
+                        prevAttendance.checkIn,
+                        prevAttendance.checkOut);
+                    prevAttendance.save();
+                    console.log(prevAttendance.workDuration = this.countWorkDuration(
+                        prevAttendance.checkIn,
+                        prevAttendance.checkOut))
+                }
             }
         }
     }
@@ -112,11 +127,16 @@ class Controller extends BaseController {
                  * Only execute when index more than 0 prevent access empty object on index before 0
                  * And did register checkout on 00:01 until 03:00
                  */
-                attendancesJson[index-1]['checkOut'] = checkOutYesterday ? this.convertToDateTimeFormat(
+                attendancesJson[index-1]['checkOut'] = checkOutYesterday 
+                ? this.convertToDateTimeFormat(
                     attendanced.Date, 
                     checkOutYesterday.hour, 
-                    checkOutYesterday.minute) : null;
-                attendancesJson[index-1].checkOutStatus = (checkOutYesterday) ? "CHECK OUT" : "NOT CHECK OUT";
+                    checkOutYesterday.minute) 
+                : null;
+
+                attendancesJson[index-1].checkOutStatus = (checkOutYesterday) 
+                ? "CHECK OUT" 
+                : "NOT CHECK OUT";
             }
             return attendanced;
         });
@@ -128,7 +148,10 @@ class Controller extends BaseController {
         let sessionAttend:ISessionAttend;
         removedDuplicateAttendance.forEach((timeAttend, index) => {
             // create sessionAttend object from attendance record
-            sessionAttend = this.identifySessionINOUT(timeAttend, removedDuplicateAttendance[index-1]);
+            sessionAttend = this.identifySessionINOUT(
+                timeAttend, 
+                removedDuplicateAttendance[index-1]
+            );
             listAttend.push(sessionAttend);
         })
         return listAttend;
@@ -138,22 +161,29 @@ class Controller extends BaseController {
         // count employees work duration everyday
         // and add checkOut information when employee checkout by next day.
         attendances.map((attendance, index) => {
-            let diffTime: Nullable<number> = 0;
             const checkIn = moment(attendance.checkIn, 'DD/MM/YYYY HH:mm');
             const checkOut = moment(attendance.checkOut, 'DD/MM/YYYY HH:mm');
-
-            if (checkIn.isBefore(checkOut)) {
-                diffTime = checkOut.diff(checkIn, 'minutes');
-                attendance.workDuration = diffTime;
-                
-            } else {
-                diffTime = checkOut.add(1, "day").diff(checkIn, 'minutes');
-                !diffTime && (diffTime = null)
-                attendance.workDuration = diffTime;
-            }
-            return attendance;
+            return this.countWorkDuration(checkIn, checkOut);
         })
         return attendances;
+    }
+
+    countWorkDuration = (dateStart, dateEnd) => {
+        let workDuration: Nullable<number> = null;
+        let diffTime: Nullable<number> = 0;
+        const checkIn = moment(dateStart);
+        const checkOut = moment(dateEnd);
+
+        if (checkIn.isBefore(checkOut)) {
+            diffTime = checkOut.diff(checkIn, 'minutes');
+            workDuration = diffTime;
+            
+        } else {
+            diffTime = checkOut.add(1, "day").diff(checkIn, 'minutes');
+            !diffTime && (diffTime = null)
+            workDuration = diffTime;
+        }
+        return workDuration;
     }
 
     parseExcelToJson = (excelFile: Express.Multer.File) => {
@@ -179,7 +209,9 @@ class Controller extends BaseController {
                     arrFilteredTimeAttends.push(_timeAttend.format("HH:mm") as never)
                     _timeAttend = tommorowTimeAttendFormated;
                 }
-                if(arrTimeAttends.length == index+1) {arrFilteredTimeAttends.push(_timeAttend.format("HH:mm") as never)}
+                if(arrTimeAttends.length == index+1) {
+                    arrFilteredTimeAttends.push(_timeAttend.format("HH:mm") as never)
+                }
             })
         }
         return arrFilteredTimeAttends;
@@ -207,6 +239,9 @@ class Controller extends BaseController {
     convertToDateTimeFormat = (date, hour, minute) => {
         return moment(`${date} ${hour}:${minute}`, "DD/MM/YYYY HH:mm")
         .format("DD/MM/YYYY HH:mm")
+    }
+    convertDateStringToISO = (date, hour, minute) => {
+        return moment(`${date} ${hour}:${minute}`, "DD/MM/YYYY h:m").toDate();
     }
 
     identifySessionINOUT = (timeAttend: string, prefAttend: string) => {

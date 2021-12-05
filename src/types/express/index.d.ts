@@ -6,6 +6,5 @@ declare global {
           currentUser: string;
         }    
 
-        export type Nullable<T> = T | undefined | null;
       }
 }

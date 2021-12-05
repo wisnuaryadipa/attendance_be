@@ -3,17 +3,31 @@ import moment from 'moment';
 import Joi from 'joi';
 import services from '@src/services';
 import { BaseController } from "@src/controllers/api";
-import {IBaseEmployee} from '@src/interfaces/db/IEmployee'
+import {IBasePosition} from '@src/interfaces/db/IPosition'
 import { IOptions } from '@src/interfaces/IResponse';
 import ApplicationError from '@src/errors/application-error';
 
-class Employee extends BaseController {
+interface IReqBody {
+    name: string;
+    basicSalary?: number;
+    wagePerHour?: number;
+    overtimeWagePerHour?: number;
+    defaultWorkingHour?: string;
+    description?: string;
+    divisionId?: number;
+}
+
+class Position extends BaseController {
+
     requestValidationSchema = {
         body: Joi.object({
             name: Joi.string().required(),
-            role: Joi.number(),
-            division: Joi.number(),
-            machineId: Joi.number().required(),
+            basicSalary: Joi.number(),
+            wagePerHour: Joi.number(),
+            overtimeWagePerHour: Joi.number(),
+            defaultWorkingHour: Joi.string(),
+            description: Joi.string(),
+            divisionId: Joi.number(),
         }).required(),
         query: Joi.object({}).required(),
         header: Joi.object({}).required().unknown(),
@@ -23,19 +37,14 @@ class Employee extends BaseController {
     requestHandler = async (req: Request, res: Response) => {
         try { 
             const _reqValidate = await this.validateRequest(req)
-            const { name, role, division, machineId } = _reqValidate.body;
-            const newEmployee: IBaseEmployee = {
-                name: name,
-                role: role ? role : 0,
-                division: division ? division : 0,
-                machineId: machineId,
-                
+            const _body: IReqBody = _reqValidate.body;
+            const newPosition = { ..._body,
                 createdAt: new Date(moment().format('YYYY-MM-DD HH:mm:ss')),
                 updatedAt: new Date(moment().format('YYYY-MM-DD HH:mm:ss')),
-                status: 1
-            };
+                status: "1",
+            } as IBasePosition;
 
-            const result = await services.employee.addEmployee(newEmployee)
+            const result = await services.position.addPosition(newPosition)
             this.responseOption = {
                 ...this.responseOption, 
                 data:result, 
@@ -56,4 +65,4 @@ class Employee extends BaseController {
     }
 }
 
-export default new Employee();
+export default new Position();

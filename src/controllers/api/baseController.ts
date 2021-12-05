@@ -6,7 +6,7 @@ import ApplicationError from '@src/errors/application-error'
 import {IOptions} from '@src/interfaces/IResponse'
 
 
-class IRequestValidationSchema {
+interface IRequestValidationSchemaJOI {
     body?: Joi.Schema;
     header?: Joi.Schema;
     params?: Joi.Schema;
@@ -27,25 +27,50 @@ export class BaseController {
     public Joi = Joi;
     sendResponse = sendResponse;
     requestHandler!: RequestHandler;
-    validation: IRequestValidationSchema = {};
-    requestValidationSchema!: IRequestValidationSchema;
-    responseOption: IOptions = {status: 500, message: "Error !, something wrong in your input parameter or problem on server. "};
+    validation: IRequestValidationSchemaJOI = {};
+    requestValidationSchema!: IRequestValidationSchemaJOI;
+    responseOption: IOptions = {
+      status: 500, 
+      message: "Error !, something wrong in your input parameter or problem on server. "
+    };
     
     validateRequest = async (req: Request) => {
         let { body, headers, params, query} = req;
-        let _return;
-        console.log(this.requestValidationSchema.query)
-        query = await this.requestValidationSchema.query?.validateAsync(query).catch(error => {
-          throw new ApplicationError({ message: error.message, flag: errorCode.INVALID_QUERY_PARAM })
+        
+        query = await this.requestValidationSchema.query?.validateAsync(query)
+        .catch( error => {
+          throw new ApplicationError({ 
+            message: error.message, 
+            flag: errorCode.INVALID_QUERY_PARAM 
+          })
         })
-        body = await this.requestValidationSchema.body?.validateAsync(body).catch(error => {
-          throw new ApplicationError({ message: error.message, flag: errorCode.INVALID_BODY })
+
+        body = await this.requestValidationSchema.body?.validateAsync(body)
+        .catch( error => {
+          throw new ApplicationError({ 
+            message: error.message, 
+            flag: errorCode.INVALID_BODY 
+          })
         })
-        headers = await this.requestValidationSchema.header?.validateAsync(headers, { allowUnknown: true }).catch(error => {
-          throw new ApplicationError({ message: error.message, flag: errorCode.INVALID_HEADER })
+        
+        headers = await this.requestValidationSchema.header?.validateAsync(
+          headers, 
+          { allowUnknown: true })
+        .catch(error => {
+          throw new ApplicationError({ 
+            message: error.message, 
+            flag: errorCode.INVALID_HEADER 
+          })
         })
-        params = await this.requestValidationSchema.params?.validateAsync(params, { allowUnknown: true }).catch(error => {
-          throw new ApplicationError({ message: error.message, flag: errorCode.INVALID_URL_PARAM })
+
+        params = await this.requestValidationSchema.params?.validateAsync(
+          params, 
+          { allowUnknown: true })
+        .catch(error => {
+          throw new ApplicationError({ 
+            message: error.message, flag: 
+            errorCode.INVALID_URL_PARAM 
+          })
         })
 
         return {query, body, headers, params}

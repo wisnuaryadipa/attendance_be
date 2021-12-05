@@ -19,8 +19,12 @@ class AttendanceService {
         return await model.tb_attendance.create(attendance);
     }
 
-    editAttendance = async (attendance: IAttendance) => {
-        return await model.tb_attendance.update(attendance, { where: {id: attendance.id}});
+    editAttendanceById = async (attendance: IAttendance, employeeId: number ,date: string) => {
+        return await model.tb_attendance.update(attendance, { where: {date: date, employeeId: employeeId}});
+    }
+
+    editAttendanceByDateEmployeeId = async (attendance: IAttendance, employeeId: number ,date: string) => {
+        return await model.tb_attendance.update(attendance, { where: {date: date, employeeId: employeeId}});
     }
 
     // editAttendanceByDateEmployeeId = async (date: string, employeeId: number, attendance: any) => {

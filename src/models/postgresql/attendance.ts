@@ -1,7 +1,7 @@
+import { IAttendance } from '@src/interfaces/db/IAttendance';
 import {DataTypes, Sequelize, Model} from 'sequelize';
-import {IDivision} from '@src/interfaces/db/IDivision';
 
-interface AttendanceInstance extends Model, IDivision {}
+interface AttendanceInstance extends Model, IAttendance {}
 
 const Attendance = (sequelize: Sequelize) => {
     const Attendance = sequelize.define<AttendanceInstance>('tb_attendance', {

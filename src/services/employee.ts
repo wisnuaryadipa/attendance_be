@@ -1,27 +1,37 @@
 import express from 'express';
 import models from '@src/models/postgresql';
 import { IEmployee, IBaseEmployee } from '@src/interfaces/db/IEmployee';
+import Position from 'src/models/postgresql/tm_position';
 
+
+const includePosition = [{model: Position, as: "position"}]
 
 class EmployeeService {
     getEmployees = async () => {
-        return await models.tm_employee.findAll({order:[['machine_id', 'ASC']]});
+        return await models.Employee.findAll({
+            order:[['machine_id', 'ASC']], 
+            include: includePosition
+        });
     }
 
     getEmployeeById = async (employeeId: number) => {
-        return await models.tm_employee.findOne({ where: {id: employeeId}});
+        return await models.Employee.findOne({ 
+            order:[['machine_id', 'ASC']], 
+            where: {id: employeeId}, 
+            include: includePosition
+        });
     }
 
     getEmployeeByDivision = async (divisionId: number) => {
-        return await models.tm_employee.findAll({ where: {division: divisionId}});
+        return await models.Employee.findAll({ where: {division: divisionId}});
     }
 
-    updateEmployee = async (employee: IEmployee) => {
+    updateEmployee = async (employee: IBaseEmployee) => {
         
     }
 
     addEmployee = async (employee: IBaseEmployee) => {
-        return await models.tm_employee.create(employee);
+        return await models.Employee.create(employee);
     }
     
 }

@@ -11,7 +11,7 @@ export interface IBaseAttendance {
     checkOut?: Date;
     createdAt: Date;
     updatedAt: Date;
-    workDuration: Nullable<number>;
+    workDuration?: Nullable<number>;
 }
 
 export interface IAttendance extends IBaseAttendance {

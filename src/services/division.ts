@@ -1,21 +1,23 @@
 import model from '@src/models/postgresql';
 import {IBaseDivision, IDivision} from '@src/interfaces/db/IDivision';
+import Position from 'src/models/postgresql/tm_position';
 
+const includePositions = [{model: Position, as: "positions"}]
 class DivisionService {
     getDivisions = async () => {
-        return await model.tm_division.findAll();
+        return await model.Division.findAll({include: includePositions});
     };
 
     getDivisionById = async (divisionId: number) => {
-        return await model.tm_division.findOne({where: {id: divisionId}});
+        return await model.Division.findOne({where: {id: divisionId}, include: includePositions});
     }
 
     addDivision = async (division: IBaseDivision) => {
-        return await model.tm_division.create(division);
+        return await model.Division.create(division);
     }
 
     editDivision = async (division: IDivision) => {
-        return await model.tm_division.update(division, { where: {id: division.id}});
+        return await model.Division.update(division, { where: {id: division.id}});
     }
 }
 

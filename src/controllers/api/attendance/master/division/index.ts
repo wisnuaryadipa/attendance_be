@@ -1,7 +1,7 @@
-import addController from '@src/controllers/api/attendance/master/division/addController';
-import getByIdController from '@src/controllers/api/attendance/master/division/getByIdController';
-import getAllController from '@src/controllers/api/attendance/master/division/getAllController';
-import editController from '@src/controllers/api/attendance/master/division/editController';
+import addController from './addController';
+import getByIdController from './getByIdController';
+import getAllController from './getAllController';
+import editController from './editController';
 
 export default {
     addOne: addController,

@@ -1,4 +1,4 @@
-import masterControllers from '@src/controllers/api/attendance/master'
+import masterControllers from './master'
 
 export default {
     master: masterControllers

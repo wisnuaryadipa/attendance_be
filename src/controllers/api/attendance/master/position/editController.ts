@@ -16,6 +16,7 @@ interface IReqBody {
     defaultWorkingHour?: string;
     description?: string;
     divisionId?: number;
+    positionId?: number;
 }
 
 class Position extends BaseController {
@@ -77,6 +78,8 @@ class Position extends BaseController {
                 status: 500
             }
         }
+        
+        this.sendResponse(req, res, this.responseOption);
     }
 }
 

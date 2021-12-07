@@ -1,7 +1,7 @@
 export interface IBasePosition {
     name: string;
     basicSalary?: string;
-    wagePerhour?: number;
+    wagePerHour?: number;
     overtimeWagePerHour?: number;
     defaultWorkingHour?: number;
     description?: number;

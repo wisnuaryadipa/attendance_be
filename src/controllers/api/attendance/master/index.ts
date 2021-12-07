@@ -1,7 +1,9 @@
-import employeeControllers from '@src/controllers/api/attendance/master/employee'
-import divisionControllers from '@src/controllers/api/attendance/master/division'
+import employeeControllers from './employee'
+import divisionControllers from './division'
+import positionController from './position'
 
 export default {
     employee: employeeControllers,
-    division: divisionControllers
+    division: divisionControllers,
+    position: positionController
 }

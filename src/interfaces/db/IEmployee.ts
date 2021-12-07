@@ -1,6 +1,8 @@
+import {IPosition} from './IPosition'
+
 export interface IBaseEmployee {
     name: string;
-    role: string;
+    role?: string;
     division?: number;
     createdAt: Date;
     updatedAt: Date;
@@ -9,13 +11,16 @@ export interface IBaseEmployee {
     positionId?: number;
     gender?:string;
     employeeStatus?:string;
-    hireDate?: Date;
-    dateOfBirth?: Date;
+    hireDate?: string;
+    dateOfBirth?: string;
     address?:string;
     contactNumber?:string;
     email?:string;
     employeeCode?:string;
     description?:string;
+    flatSalary?:number;
+    activeFlatSalary?:boolean;
+    readonly position?: IPosition
 }
 
 export interface IEmployee extends IBaseEmployee {

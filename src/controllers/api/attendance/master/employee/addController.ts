@@ -10,10 +10,23 @@ import ApplicationError from '@src/errors/application-error';
 class Employee extends BaseController {
     requestValidationSchema = {
         body: Joi.object({
-            name: Joi.string().required(),
-            role: Joi.number(),
-            division: Joi.number(),
-            machineId: Joi.number().required(),
+            name: Joi.string(),
+            role: Joi.string(),
+            division: Joi.string(),
+            status: Joi.string(),
+            machineId: Joi.string().required(),
+            positionId: Joi.string(),
+            gender:Joi.string(),
+            employeeStatus:Joi.string(),
+            hireDate: Joi.string(),
+            dateOfBirth: Joi.string(),
+            address:Joi.string(),
+            contactNumber:Joi.string(),
+            email:Joi.string(),
+            employeeCode:Joi.string(),
+            description:Joi.string(),
+            flatSalary:Joi.number(),
+            activeFlatSalary:Joi.boolean(),
         }).required(),
         query: Joi.object({}).required(),
         header: Joi.object({}).required().unknown(),
@@ -23,19 +36,15 @@ class Employee extends BaseController {
     requestHandler = async (req: Request, res: Response) => {
         try { 
             const _reqValidate = await this.validateRequest(req)
-            const { name, role, division, machineId } = _reqValidate.body;
-            const newEmployee: IBaseEmployee = {
-                name: name,
-                role: role ? role : 0,
-                division: division ? division : 0,
-                machineId: machineId,
-                
-                createdAt: new Date(moment().format('YYYY-MM-DD HH:mm:ss')),
-                updatedAt: new Date(moment().format('YYYY-MM-DD HH:mm:ss')),
-                status: 1
-            };
-
-            const result = await services.employee.addEmployee(newEmployee)
+            const _body = _reqValidate.body;
+            const newEmployee: Partial<IBaseEmployee> = {};
+            
+            for (const key in _body) {
+                _body[key] !== null && (newEmployee[key] = _body[key]);
+            }
+            newEmployee.updatedAt = moment().toDate();
+            
+            const result = await services.employee.addEmployee(newEmployee as IBaseEmployee)
             this.responseOption = {
                 ...this.responseOption, 
                 data:result, 

@@ -45,8 +45,11 @@ export class BaseController {
           })
         })
 
-        body = await this.requestValidationSchema.body?.validateAsync(body)
+        console.log(body)
+        body = await this.requestValidationSchema.body?.validateAsync(body,
+          { allowUnknown: true })
         .catch( error => {
+          console.log('erre')
           throw new ApplicationError({ 
             message: error.message, 
             flag: errorCode.INVALID_BODY 
@@ -75,5 +78,5 @@ export class BaseController {
 
         return {query, body, headers, params}
 
-      }
+    }
 }

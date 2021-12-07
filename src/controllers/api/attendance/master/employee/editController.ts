@@ -2,12 +2,13 @@
 import Joi from 'joi';
 import express, {Request, Response} from 'express';
 import moment from 'moment';
-
+import {EmployeeInstance} from '@src/models/postgresql/tm_employee';
 import ErrorCol from '@src/errors';
 import services from '@src/services';
 import ApplicationError from '@src/errors/application-error';
 import {BaseController} from '@src/controllers/api/baseController';
 
+interface IReqBody extends EmployeeInstance {}
 
 class Employee extends BaseController {
 
@@ -15,11 +16,23 @@ class Employee extends BaseController {
         header: Joi.object({}).required(),
         body: Joi.object({
             name: Joi.string(),
-            role: Joi.number(),
-            division: Joi.number(),
-            status: Joi.number(),
-            machineId: Joi.number(),
-        }).or('name', 'role', 'division', 'status', 'machine_id').required(),
+            role: Joi.string(),
+            division: Joi.string(),
+            status: Joi.string(),
+            machineId: Joi.string().required(),
+            positionId: Joi.string(),
+            gender:Joi.string(),
+            employeeStatus:Joi.string(),
+            hireDate: Joi.string(),
+            dateOfBirth: Joi.string(),
+            address:Joi.string(),
+            contactNumber:Joi.string(),
+            email:Joi.string(),
+            employeeCode:Joi.string(),
+            description:Joi.string(),
+            flatSalary:Joi.number(),
+            activeFlatSalary:Joi.boolean(),
+        }).or('name', 'role', 'division', 'status', 'machineId').required(),
         query: Joi.object({}).required(),
         params: Joi.object({
             id: Joi.number().required(),
@@ -31,7 +44,7 @@ class Employee extends BaseController {
         try {
             const validateRequest = await this.validateRequest(req);
             const {id} = validateRequest.params;
-            const {name, role, division, status, machineId} = validateRequest.body;
+            const _body: IReqBody = validateRequest.body;
             const _employee = await services.employee.getEmployeeById(parseInt(id));
             
             if (!_employee) { 
@@ -42,12 +55,11 @@ class Employee extends BaseController {
                 })
 
             } else {
+                
+                for (const key in _body) {
 
-                _employee.name = (name) ? name : _employee.name;
-                _employee.role = (role) ? role : _employee.role;
-                _employee.division = (division) ? division : _employee.division;
-                _employee.status = (status) ? status : _employee.status;
-                _employee.machineId = (machineId) ? machineId : _employee.machineId;
+                    _employee[key] = _body[key];
+                }
                 _employee.updatedAt = moment().toDate();
                 const result = await _employee.save();
 
@@ -68,6 +80,9 @@ class Employee extends BaseController {
                 status: 500
             }
         }
+
+        this.sendResponse(req, res, this.responseOption);
+
     }
 }
 

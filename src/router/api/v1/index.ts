@@ -18,4 +18,9 @@ v1.post('/master/employee/add', controller.apiControllers.attendanceControllers.
 v1.put('/master/employee/edit/:id', controller.apiControllers.attendanceControllers.master.employee.edit.requestHandler);
 v1.get('/master/employee/:id', controller.apiControllers.attendanceControllers.master.employee.getById.requestHandler);
 
+v1.get('/master/position/get-all', controller.apiControllers.attendanceControllers.master.position.getAll.requestHandler);
+v1.post('/master/position/add', controller.apiControllers.attendanceControllers.master.position.addOne.requestHandler);
+v1.put('/master/position/edit/:id', controller.apiControllers.attendanceControllers.master.position.edit.requestHandler);
+v1.get('/master/position/:id', controller.apiControllers.attendanceControllers.master.position.getById.requestHandler);
+
 export default v1;

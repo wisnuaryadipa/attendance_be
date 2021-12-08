@@ -1,3 +1,4 @@
+import { IEmployee } from '@src/interfaces/db/IEmployee';
 import { Nullable } from "@src/types/common";
 
 export interface IBaseAttendance {
@@ -16,4 +17,5 @@ export interface IBaseAttendance {
 
 export interface IAttendance extends IBaseAttendance {
     id: number;
+    readonly employee?: IEmployee;
 }

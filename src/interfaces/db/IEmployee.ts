@@ -1,3 +1,4 @@
+import { IAttendance } from './IAttendance';
 import {IPosition} from './IPosition'
 
 export interface IBaseEmployee {
@@ -20,11 +21,13 @@ export interface IBaseEmployee {
     description?:string;
     flatSalary?:number;
     activeFlatSalary?:boolean;
-    readonly position?: IPosition
 }
 
 export interface IEmployee extends IBaseEmployee {
     id: number;
+    readonly position?: IPosition
+    readonly attendances?: IAttendance[];
+
 }
 
 export interface IEmployees {

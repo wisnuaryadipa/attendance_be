@@ -82,7 +82,7 @@ interface AttendanceInstance extends Model, IBaseAttendance {}
 
 const Attendance = sequelize.define<AttendanceInstance>('tb_attendance', {
     employeeId: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: false,
       field: 'employee_id'
     },

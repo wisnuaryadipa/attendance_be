@@ -1,18 +1,22 @@
+import { IEmployee } from '@src/interfaces/db/IEmployee';
 import model from '@src/models/postgresql';
 import {IBaseAttendance, IAttendance} from '@src/interfaces/db/IAttendance';
+import Employee from '@src/models/postgresql/tm_employee';
 import moment from 'moment';
 
+
+const includeObj = [{model: Employee, as: "employee"}]
 class AttendanceService {
     getAttendance = async () => {
-        return await model.Attendance.findAll();
+        return await model.Attendance.findAll({include: includeObj});
     };
 
     getAttendanceById = async (attendanceId: number) => {
-        return await model.Attendance.findOne({where: {id: attendanceId}});
+        return await model.Attendance.findOne({where: {id: attendanceId}, include: includeObj});
     }
 
     getAttendanceByDateEmployeeId = async (employeeId: number ,date: string) => {
-        return await model.Attendance.findOne({ where: {date: date, employeeId: employeeId}});
+        return await model.Attendance.findOne({ where: {date: date, employeeId: employeeId}, include: includeObj});
     }
 
     addAttendance = async (attendance: IBaseAttendance) => {

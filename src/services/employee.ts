@@ -2,9 +2,10 @@ import express from 'express';
 import models from '@src/models/postgresql';
 import { IEmployee, IBaseEmployee } from '@src/interfaces/db/IEmployee';
 import Position from 'src/models/postgresql/tm_position';
+import Attendance from 'src/models/postgresql/tb_attendance';
 
 
-const includePosition = [{model: Position, as: "position"}]
+const includePosition = [{model: Position, as: "position"}, {model: Attendance, as: "attendances"}]
 
 class EmployeeService {
     getEmployees = async () => {

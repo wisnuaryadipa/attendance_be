@@ -35,5 +35,13 @@ Division.hasMany(Position, {
 
 Position.belongsTo(Division, { foreignKey: 'divisionId', targetKey: 'id', as: 'division' });
 
+Employee.hasMany(Attendance, {
+    foreignKey: 'employeeId',
+    sourceKey: 'machineId',
+    as: 'attendances'
+})
+
+Attendance.belongsTo(Employee, { foreignKey: 'employeeId', targetKey: 'machineId', as: 'employee' });
+
 export type MyModel = typeof modelCollection;
 export default modelCollection;

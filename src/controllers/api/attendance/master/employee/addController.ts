@@ -25,7 +25,7 @@ class Employee extends BaseController {
             email:Joi.string().allow(""),
             employeeCode:Joi.string().allow(""),
             description:Joi.string().allow(""),
-            flatSalary:Joi.number(),
+            flatSalary:Joi.number().allow(""),
             activeFlatSalary:Joi.boolean(),
         }).required(),
         query: Joi.object({}).required(),

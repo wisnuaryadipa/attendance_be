@@ -30,7 +30,7 @@ class Employee extends BaseController {
             email:Joi.string().allow(""),
             employeeCode:Joi.string().allow(""),
             description:Joi.string().allow(""),
-            flatSalary:Joi.number(),
+            flatSalary:Joi.number().empty("").default(null),
             activeFlatSalary:Joi.boolean(),
         }).or('name', 'role', 'division', 'status', 'machineId').required(),
         query: Joi.object({}).required(),

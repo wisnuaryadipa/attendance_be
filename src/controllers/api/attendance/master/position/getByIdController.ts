@@ -1,3 +1,4 @@
+import positionServices from '@src/services/position';
 import express, {Request, Response} from 'express';
 import { BaseController } from '@src/controllers/api';
 import {IOptions} from '@src/interfaces/IResponse'
@@ -21,7 +22,7 @@ class PositionController extends BaseController {
 
         try {
 
-            const data = await employeeServices.getEmployeeById(parseInt(id));
+            const data = await positionServices.getPositionById(parseInt(id));
             this.responseOption = {
                 ...this.responseOption, 
                 data:data, 

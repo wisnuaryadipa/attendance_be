@@ -16,7 +16,6 @@ class PositionController extends BaseController {
                 status: 201,
                 message: "Success!"
             }
-            console.log(this.responseOption)
             
         } catch (err: any) {
             console.log(err);

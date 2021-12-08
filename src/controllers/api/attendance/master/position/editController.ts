@@ -27,9 +27,9 @@ class Position extends BaseController {
             name: Joi.string().required(),
             basicSalary: Joi.number(),
             wagePerHour: Joi.number(),
+            description: Joi.string().allow(""),
             overtimeWagePerHour: Joi.number(),
-            defaultWorkingHour: Joi.string(),
-            description: Joi.string(),
+            defaultWorkingHour: Joi.string().allow(""),
             divisionId: Joi.number(),
         }).required(),
         query: Joi.object({}).required(),
@@ -42,6 +42,7 @@ class Position extends BaseController {
 
         try {
             const validateRequest = await this.validateRequest(req);
+            console.log(req)
             const {id} = validateRequest.params;
             const _body: IReqBody = validateRequest.body;
             const _position = await services.position.getPositionById(parseInt(id));
@@ -56,7 +57,7 @@ class Position extends BaseController {
             } else {
 
                 for (const key in _body) {
-                    _body[key] && (_position[key] = _body[key])
+                    _body[key] !== null && (_position[key] = _body[key])
                 }
                 _position.updatedAt = moment().toDate();
                 const result = await _position.save();

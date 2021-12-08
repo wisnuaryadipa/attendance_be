@@ -44,8 +44,7 @@ export class BaseController {
             flag: errorCode.INVALID_QUERY_PARAM 
           })
         })
-
-        console.log(body)
+        
         body = await this.requestValidationSchema.body?.validateAsync(body,
           { allowUnknown: true })
         .catch( error => {

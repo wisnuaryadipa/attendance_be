@@ -18,7 +18,7 @@ class Division extends BaseController {
 
     requestValidationSchema = {
         body: Joi.object({
-            name: Joi.string(),
+            name: Joi.string().required(),
             status: Joi.number()
         }).or('name','status').required(),
         query: Joi.object({}).required(),

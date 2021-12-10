@@ -23,4 +23,7 @@ v1.post('/master/position/add', controller.apiControllers.attendanceControllers.
 v1.put('/master/position/edit/:id', controller.apiControllers.attendanceControllers.master.position.edit.requestHandler);
 v1.get('/master/position/:id', controller.apiControllers.attendanceControllers.master.position.getById.requestHandler);
 
+v1.post('/master/attendance/filter/:employeeId', controller.apiControllers.attendanceControllers.attendance.filterByEmployee.requestHandler);
+
+
 export default v1;

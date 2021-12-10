@@ -1,10 +1,20 @@
+import sequelize from '@src/loaders/sequelize';
 import AttendanceMachine from './tm_attendance_machine';
 import Division from './tm_division';
 import Employee from './tm_employee';
 import Attendance from './tb_attendance';
 import Position from './tm_position';
+import { Sequelize, ModelCtor } from 'sequelize';
 
-const modelCollection = {
+
+interface IModelCollection {
+    Sequelize: Sequelize,
+    [key: string]: any
+}
+
+const modelCollection: IModelCollection = {
+    sequelize: Sequelize,
+    Sequelize: sequelize,
     AttendanceMachine: AttendanceMachine,
     Division : Division,
     Employee : Employee,

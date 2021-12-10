@@ -1,8 +1,7 @@
 import model from '@src/models/postgresql';
-import {IBaseDivision, IDivision} from '@src/interfaces/db/IDivision';
-import Position from 'src/models/postgresql/tm_position';
+import {IBaseDivision, IDivision} from '@src/interfaces/db/IDivision';;
 
-const includePositions = [{model: Position, as: "positions"}]
+const includePositions = [{model: model.Position, include: [{model: model.Employee, as: 'employees'}] , as: "positions"}]
 class DivisionService {
     getDivisions = async () => {
         return await model.Division.findAll({include: includePositions});

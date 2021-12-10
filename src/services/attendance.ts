@@ -1,10 +1,13 @@
+
 import { IEmployee } from '@src/interfaces/db/IEmployee';
 import model from '@src/models/postgresql';
 import {IBaseAttendance, IAttendance} from '@src/interfaces/db/IAttendance';
 import Employee from '@src/models/postgresql/tm_employee';
 import moment from 'moment';
+import { Op, Sequelize } from 'sequelize';
 
 
+const sequelize = model.Attendance.sequelize;
 const includeObj = [{model: Employee, as: "employee"}]
 class AttendanceService {
     getAttendance = async () => {
@@ -29,6 +32,27 @@ class AttendanceService {
 
     editAttendanceByDateEmployeeId = async (attendance: IBaseAttendance, employeeId: number ,date: string) => {
         return await model.Attendance.update(attendance, { where: {date: date, employeeId: employeeId}});
+    }
+
+    getAttendanceFilter = async (employeeId: number, filter: any) => {
+        const _where = {employeeId: employeeId} as any;
+        const _arrWhere: any = [];
+        if(filter){
+            if(filter.month && filter.year){
+                // _where[Op.and] = [sequelize.where(sequelize.fn('substring', sequelize.col("date"), 3, 5), "=", filter.month.toString() ), 
+                // sequelize.where(sequelize.fn('substring', sequelize.col("date"), 6, 7), "=", filter.year )] 
+                // Sequelize.where(Sequelize.fn("substr", Sequelize.col("date"), 3, 5), {[Op.eq]: "10"})
+                const dateClouse = sequelize.where(sequelize.fn("SUBSTRING", sequelize.col("date"), 3, 5), filter.month)
+                _arrWhere.push(dateClouse);
+            }
+        }
+        
+        _arrWhere.push(_where)
+        return await model.Attendance.findAll({ 
+            where:  Sequelize.where( Sequelize.fn("substring", Sequelize.col("date"), 4, 2), {[Op.eq]: filter.month.toString()})
+            
+
+        });
     }
 
     // editAttendanceByDateEmployeeId = async (date: string, employeeId: number, attendance: any) => {

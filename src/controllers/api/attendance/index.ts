@@ -1,5 +1,7 @@
 import masterControllers from './master'
+import attendancesController from './attendance'
 
 export default {
-    master: masterControllers
+    master: masterControllers,
+    attendance: attendancesController
 }

@@ -134,4 +134,5 @@ const Attendance = sequelize.define<AttendanceInstance>('tb_attendance', {
     // Another option
   });
 
+  
 export default Attendance;

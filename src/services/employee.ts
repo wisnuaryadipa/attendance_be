@@ -1,17 +1,25 @@
 import express from 'express';
 import models from '@src/models/postgresql';
 import { IEmployee, IBaseEmployee } from '@src/interfaces/db/IEmployee';
-import Position from 'src/models/postgresql/tm_position';
-import Attendance from 'src/models/postgresql/tb_attendance';
+import model from 'src/models/postgresql';
 
+const includeAll = [
+    {model: model.Position, as: "position", include: [{
+        model: model.Division, as: "division"
+    }]}
+]
 
-const includePosition = [{model: Position, as: "position"}, {model: Attendance, as: "attendances"}]
+const includePosition = [
+    {model: model.Position, as: "position", include: [{
+        model: model.Division, as: "division"
+    }]}, 
+    {model: model.Attendance, as: "attendances"}]
 
 class EmployeeService {
     getEmployees = async () => {
         return await models.Employee.findAll({
             order:[['machine_id', 'ASC']], 
-            include: includePosition
+            include: includeAll
         });
     }
 

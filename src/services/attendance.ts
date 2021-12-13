@@ -4,7 +4,7 @@ import model from '@src/models/postgresql';
 import {IBaseAttendance, IAttendance} from '@src/interfaces/db/IAttendance';
 import Employee from '@src/models/postgresql/tm_employee';
 import moment from 'moment';
-import { Op, Sequelize } from 'sequelize';
+import {Op} from 'sequelize';
 
 
 const sequelize = model.Attendance.sequelize;
@@ -49,7 +49,12 @@ class AttendanceService {
         
         _arrWhere.push(_where)
         return await model.Attendance.findAll({ 
-            where:  Sequelize.where( Sequelize.fn("substring", Sequelize.col("date"), 4, 2), {[Op.eq]: filter.month.toString()})
+            where:  {
+                [Op.and]: [
+                    model.Attendance.sequelize.where( model.Attendance.sequelize.fn("substring", model.Attendance.sequelize.col("date"), 4, 2), {[Op.eq]: filter.month.toString()}),
+                    _where
+                ]
+            }
             
 
         });

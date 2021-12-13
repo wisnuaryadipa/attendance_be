@@ -26,7 +26,7 @@ class EmployeeService {
     getEmployeeById = async (employeeId: number) => {
         return await models.Employee.findOne({ 
             order:[['machine_id', 'ASC']], 
-            where: {id: employeeId}, 
+            where: {machine_id: employeeId}, 
             include: includePosition
         });
     }

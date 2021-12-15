@@ -1,11 +1,13 @@
-import divisionServices from '@src/services/division';
-import employeeServices from '@src/services/employee';
-import attendanceSerives from '@src/services/attendance';
-import positionServices from '@src/services/position';
+import divisionServices from './division';
+import employeeServices from './employee';
+import attendanceSerives from './attendance';
+import positionServices from './position';
+import payrollServices from './payroll';
 
 export default {
     division: divisionServices,
     employee: employeeServices,
     attendance: attendanceSerives,
     position: positionServices,
+    payroll: payrollServices,
 }

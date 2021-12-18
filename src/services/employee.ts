@@ -35,6 +35,21 @@ class EmployeeService {
         return await models.Employee.findAll({ where: {division: divisionId}});
     }
 
+    getEmployeeByIdFilter = async (employeeId: number, filter: any) => {
+        console.log(employeeId)
+        
+        const whereCollection = {} as any;
+        whereCollection['machine_id'] = employeeId;
+        filter.month && (whereCollection['month'] = filter.month);
+        filter.year && (whereCollection['year'] = filter.year);
+
+        return await models.Employee.findOne({ 
+            order:[['machine_id', 'ASC']], 
+            where: whereCollection, 
+            include: includePosition
+        });
+    }
+
     updateEmployee = async (employee: IBaseEmployee) => {
         
     }

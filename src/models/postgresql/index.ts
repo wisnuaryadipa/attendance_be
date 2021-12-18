@@ -56,4 +56,5 @@ Attendance.belongsTo(Employee, { foreignKey: 'employeeId', targetKey: 'machineId
 Payroll.belongsTo(Employee, { foreignKey: 'employeeId', targetKey: 'machineId', as: 'employee' });
 
 export type MyModel = typeof modelCollection;
+
 export default modelCollection;

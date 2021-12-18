@@ -1,24 +1,28 @@
 import express, {Request, Response} from 'express';
 import { BaseController } from '@src/controllers/api';
 import { IOptions } from '@src/interfaces/IResponse';
-import service from '@src/services/payroll';
+import servicePayroll from '@src/services/payroll';
+import serviceEmployee from '@src/services/employee';
 import Joi from 'joi';
 import moment from 'moment'
 
 class PayrollController extends BaseController {
 
     requestValidationSchema = {
-        body: Joi.object({
-            name: Joi.string().required(),
+        body: Joi.object({}).required(),
+        query: Joi.object({
+            month: Joi.string(),
+            year: Joi.string()
         }).required(),
-        query: Joi.object({}).required(),
         header: Joi.object({}).required().unknown(true),
-        params: Joi.object({}).required()
+        params: Joi.object({
+            employeeId: Joi.number().required()
+        }).required()
     }
 
     requestHandler = async (req: Request, res: Response) => {
         const validateRequest = await this.validateRequest(req);
-        const {employeeId} = await validateRequest.body;
+        const {employeeId} = await validateRequest.params;
         const {month, year} = await validateRequest.query;
         const filter = {
             month: month ? month : moment().format("M"),
@@ -27,7 +31,7 @@ class PayrollController extends BaseController {
         
         try {
 
-            const data = await service.getPayrollByEmployeeId(employeeId, filter);
+            const data = await serviceEmployee.getEmployeeByIdFilter(parseInt(employeeId), filter);
             this.responseOption = {
                 ...this.responseOption, 
                 data:data, 

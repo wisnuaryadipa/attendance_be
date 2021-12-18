@@ -33,3 +33,4 @@ export interface IEmployee extends IBaseEmployee {
 export interface IEmployees {
     [key:number]: IEmployee
 }
+

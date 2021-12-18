@@ -44,7 +44,7 @@ const Payroll = sequelize.define<PayrollInstance>('tb_payroll', {
     tunjangan: {
       type: DataTypes.NUMBER,
       allowNull: true,
-      field: 'check_out'
+      field: 'tunjangan'
     },
     fasilitasBpjs: {
       type: DataTypes.NUMBER,
@@ -86,6 +86,10 @@ const Payroll = sequelize.define<PayrollInstance>('tb_payroll', {
         defaultValue: DataTypes.NOW,
         field: 'updated_at'
     },
+    selectedSalaryType: {
+        type: DataTypes.BOOLEAN,
+        field: 'is_use_flat'
+    }
   }, {
     schema: 'attendance',
     // Another option

@@ -5,7 +5,7 @@ import { Nullable } from '@src/types/common';
 import sequelize from '@src/loaders/sequelize';
 import Position from './tm_position';
 
-interface PayrollInstance extends Model, IBasePayroll {}
+export interface PayrollInstance extends Model, IBasePayroll {}
 
 const Payroll = sequelize.define<PayrollInstance>('tb_payroll', {
     employeeId: {

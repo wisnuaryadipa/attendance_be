@@ -16,6 +16,17 @@ class PayrollService {
     getPayrollById = async (payrollId: number) => {
         return await model.Payroll.findOne({where: {id: payrollId}, include: includeObj});
     }
+
+    getPayrollByEmployeeIdMonthYear = async (employeeId: number, year: number, month: number) => {
+        const result = await model.Payroll.findOne({ where: {
+            employeeId: employeeId,
+            year: year,
+            month: month
+        }});
+        console.log(result)
+        return result
+    }
+    
     getPayrollByEmployeeId = async (employeeId: number, filter: any) => {
         const whereCollection = {} as any;
         whereCollection['employee_id'] = employeeId;
@@ -31,6 +42,8 @@ class PayrollService {
     editPayroll = async (payroll: IPayroll) => {
         return await model.Payroll.update(payroll, { where: {id: payroll.id}});
     }
+
+    
 }
 
 export default new PayrollService();

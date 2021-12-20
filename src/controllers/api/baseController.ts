@@ -70,8 +70,8 @@ export class BaseController {
           { allowUnknown: true })
         .catch(error => {
           throw new ApplicationError({ 
-            message: error.message, flag: 
-            errorCode.INVALID_URL_PARAM 
+            message: error.message, 
+            flag: errorCode.INVALID_URL_PARAM 
           })
         })
 

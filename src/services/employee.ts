@@ -2,6 +2,8 @@ import express from 'express';
 import models from '@src/models/postgresql';
 import { IEmployee, IBaseEmployee } from '@src/interfaces/db/IEmployee';
 import model from 'src/models/postgresql';
+import { EmployeeInstance } from '@src/models/postgresql/tm_employee';
+import { Includeable } from 'sequelize/types';
 
 const includeAll = [
     {model: model.Position, as: "position", include: [{
@@ -9,7 +11,7 @@ const includeAll = [
     }]}
 ]
 
-const includePosition = [
+let includePosition : Includeable[] = [
     {model: model.Position, as: "position", include: [{
         model: model.Division, as: "division"
     }]}, 
@@ -27,7 +29,7 @@ class EmployeeService {
         return await models.Employee.findOne({ 
             order:[['machine_id', 'ASC']], 
             where: {machine_id: employeeId}, 
-            include: includePosition
+            include: includePosition, 
         });
     }
 
@@ -36,12 +38,19 @@ class EmployeeService {
     }
 
     getEmployeeByIdFilter = async (employeeId: number, filter: any) => {
-        console.log(employeeId)
+        includePosition = [...includePosition, {
+            model: model.Payroll,
+            where: {
+                month: filter.month,
+                year: filter.year
+            },
+            required: false,
+            as: 'payrolls'
+        }]
+
         
         const whereCollection = {} as any;
         whereCollection['machine_id'] = employeeId;
-        filter.month && (whereCollection['month'] = filter.month);
-        filter.year && (whereCollection['year'] = filter.year);
 
         return await models.Employee.findOne({ 
             order:[['machine_id', 'ASC']], 

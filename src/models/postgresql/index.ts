@@ -52,8 +52,15 @@ Employee.hasMany(Attendance, {
     as: 'attendances'
 })
 
+Employee.hasMany(Payroll, { 
+    foreignKey: 'employeeId', 
+    sourceKey: 'machineId', 
+    as: 'payrolls' 
+});
+
+
+
 Attendance.belongsTo(Employee, { foreignKey: 'employeeId', targetKey: 'machineId', as: 'employee' });
-Payroll.belongsTo(Employee, { foreignKey: 'employeeId', targetKey: 'machineId', as: 'employee' });
 
 export type MyModel = typeof modelCollection;
 

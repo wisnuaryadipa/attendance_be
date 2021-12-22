@@ -1,15 +1,72 @@
 import express from 'express';
 import models from '@src/models/postgresql';
 import { IEmployee, IBaseEmployee } from '@src/interfaces/db/IEmployee';
-import model from 'src/models/postgresql';
+import model from '@src/models/postgresql';
 import { EmployeeInstance } from '@src/models/postgresql/tm_employee';
 import { Includeable } from 'sequelize/types';
+import {IncludeList} from '@src/models/postgresql/realation';
+import {MonthYear} from '@src/types/common';
+import { Op } from 'sequelize';
 
-const includeAll = [
-    {model: model.Position, as: "position", include: [{
-        model: model.Division, as: "division"
-    }]}
-]
+
+const arch = {
+    position: {
+        division: "end"
+    },
+    payrolls: 'end'
+}
+
+const whereArch = {
+    id: 1,
+    position:{
+        division: {}
+    },
+    payrolls: {
+        month: 12,
+        year: 2021
+    }
+}
+
+const _includeList = IncludeList(model)
+const buildIncludes = (archInclude: any) => {
+    const arrIncludes: any = [];
+    for (const key in archInclude) {
+        if (typeof archInclude[key] === 'object') {
+            const includeObj: any = _includeList[key]
+            includeObj['include'] = buildIncludes(archInclude[key])
+            arrIncludes.push(includeObj)
+        } else {
+            arrIncludes.push(_includeList[key])
+        }
+    }
+    return arrIncludes;
+}
+
+const buildWhere = (archWhere) => {
+    let all = {};
+    const arrIncludes: any = [];
+    let _where = {}
+    let _option = {
+        where: {},
+        include: []
+    }
+    for (const key in archWhere) {
+
+        if (typeof archWhere[key] === 'object') {
+           const  __where = buildWhere(archWhere[key]);
+            const includeObj: any = {..._includeList[key], where: __where}
+            includeObj['include'] = buildWhere(archWhere[key])
+            console.log(includeObj)
+            _where = {..._where, includeObj};
+        } else {
+            arrIncludes.push(_includeList[key])
+            _where = {..._where, [key]: archWhere[key]}
+        }
+
+    }
+    return _where;
+}
+
 
 let includePosition : Includeable[] = [
     {model: model.Position, as: "position", include: [{
@@ -18,10 +75,34 @@ let includePosition : Includeable[] = [
     {model: model.Attendance, as: "attendances"}]
 
 class EmployeeService {
-    getEmployees = async () => {
+    getEmployees = async ({filter = undefined as any, includes = undefined as any} = {}) => {
+        let where: Partial<any> = {
+            inputedPayroll: {[Op.or]: [null, {[Op.not]: null}]},
+            payroll: {},
+            attendance: {},
+            division: {}
+        };
+        console.log(filter)
+        if (filter) {
+            where.payroll["year"] = filter.year;
+            where.payroll["month"] = filter.month;
+            if (filter.inputedPayroll === "1") { where.inputedPayroll = null }
+            if (filter.inputedPayroll === "2") { where.inputedPayroll = {[Op.not]: null} }
+        } else {
+
+        }
+
         return await models.Employee.findAll({
             order:[['machine_id', 'ASC']], 
-            include: includeAll
+            where: {
+                '$payrolls$': where.inputedPayroll
+            },
+            include: [
+                { model: model.Position, as: "position", include: [{
+                    model: model.Division, as: "division"
+                }] },
+                { model: model.Payroll, as: "payrolls", required: false, where: where.payroll,  }
+            ]
         });
     }
 

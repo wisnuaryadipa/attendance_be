@@ -2,13 +2,34 @@ import {BaseController} from '@src/controllers/api/baseController';
 import express, {Request, Response} from 'express';
 import employeeService from '@src/services/employee'
 import { ParsedQs } from 'qs';
+import Joi from 'joi';
+import moment from 'moment';
 
 class Employee extends BaseController {
 
+    requestValidationSchema = {
+        body: Joi.object({}).required(),
+        query: Joi.object({
+            month: Joi.string(),
+            year: Joi.string(),
+            inputedPayroll: Joi.string()
+        }).required(),
+        header: Joi.object({}).required().unknown(true),
+        params: Joi.object({}).required()
+    }
+
     requestHandler = async (req: Request, res: Response) => {
         try {
+            const validateRequest = await this.validateRequest(req);
+            const {month, year, inputedPayroll} = await validateRequest.query;
+            const filter = {
+                month: month ? parseInt(month.toString()) : moment().format("M"),
+                year: year ? parseInt(year.toString()) : moment().format("YYYY"),
+                inputedPayroll: inputedPayroll ?? undefined
+            }
+            
 
-            const data = await employeeService.getEmployees();
+            const data = await employeeService.getEmployees({filter: filter});
             this.responseOption = {
                 ...this.responseOption, 
                 data:data, 

@@ -14,6 +14,7 @@ v1.put('/master/division/edit/:id', controller.apiControllers.attendanceControll
 v1.get('/master/division/:id', controller.apiControllers.attendanceControllers.master.division.getById.requestHandler);
 
 v1.get('/master/employee/get-all', controller.apiControllers.attendanceControllers.master.employee.getAll.requestHandler);
+v1.get('/master/employees/payroll', controller.apiControllers.attendanceControllers.master.employee.payroll.getAllByPayroll.requestHandler);
 v1.post('/master/employee/add', controller.apiControllers.attendanceControllers.master.employee.addOne.requestHandler);
 v1.put('/master/employee/edit/:id', controller.apiControllers.attendanceControllers.master.employee.edit.requestHandler);
 v1.get('/master/employee/:id', controller.apiControllers.attendanceControllers.master.employee.getById.requestHandler);

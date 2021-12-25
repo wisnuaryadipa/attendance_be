@@ -3,6 +3,8 @@ import model from '@src/models/postgresql';
 import {IBasePayroll, IPayroll} from '@src/interfaces/db/IPayroll';
 import {IBaseEmployee, IEmployee} from '@src/interfaces/db/IEmployee';
 import Employee from '@src/models/postgresql/tm_employee';
+import { PayrollInstance } from '@src/models/postgresql/tb_payroll';
+import {Op} from 'sequelize';
 
 
 const includeObj = [{model: Employee, as: "employee"}]
@@ -23,7 +25,6 @@ class PayrollService {
             year: year,
             month: month
         }});
-        console.log(result)
         return result
     }
     
@@ -41,6 +42,26 @@ class PayrollService {
 
     editPayroll = async (payroll: IPayroll) => {
         return await model.Payroll.update(payroll, { where: {id: payroll.id}});
+    }
+
+    getLastInputByEmployeeId = async (emplopyeeId: number, filter: any ) => {
+        let result: PayrollInstance[];
+        const whereCollection = {} as any;
+        whereCollection['employee_id'] = emplopyeeId;
+
+        filter.month && (whereCollection['month'] = filter.month);
+        filter.year && (whereCollection['year'] = filter.year);
+        const resSelectedYear = await model.Payroll.findAll({where: whereCollection, limit: 1})
+        
+        if (resSelectedYear.length > 0) {
+            result = resSelectedYear;
+        } else {
+            whereCollection['month'] = {[Op.lte]: 12};
+            whereCollection['year'] = {[Op.lte]: filter.year - 1};
+            result = await model.Payroll.findAll({where: whereCollection, limit: 1})
+        }
+        return result[0]
+
     }
 
     

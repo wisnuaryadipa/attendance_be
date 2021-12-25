@@ -26,8 +26,10 @@ v1.get('/master/position/:id', controller.apiControllers.attendanceControllers.m
 
 v1.post('/master/attendance/filter/:employeeId', controller.apiControllers.attendanceControllers.attendance.filterByEmployee.requestHandler);
 
-v1.post('/payroll/:employeeId', controller.apiControllers.PayrollController.addPayrollPrint.requestHandler);
-v1.get('/payroll/:employeeId', controller.apiControllers.PayrollController.getByEmployeeId.requestHandler);
-v1.put('/payroll/:employeeId/:year/:month', controller.apiControllers.PayrollController.editPayrollPrint.requestHandler);
+v1.post('/payroll/:employeeId', controller.apiControllers.PayrollController.print.addPayrollPrint.requestHandler);
+v1.get('/payroll/:employeeId', controller.apiControllers.PayrollController.print.getByEmployeeId.requestHandler);
+v1.put('/payroll/:employeeId/:year/:month', controller.apiControllers.PayrollController.print.editPayrollPrint.requestHandler);
+v1.get('/payroll/last-input/:employeeId', controller.apiControllers.PayrollController.getLastInputByEmployeeId.requestHandler);
+
 
 export default v1;

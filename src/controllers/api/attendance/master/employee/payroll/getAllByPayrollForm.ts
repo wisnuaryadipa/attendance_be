@@ -1,9 +1,15 @@
+import { EmployeeInstance } from '@src/models/postgresql/tm_employee';
 import {BaseController} from '@src/controllers/api/baseController';
 import express, {Request, Response} from 'express';
 import employeeService from '@src/services/employee'
 import { ParsedQs } from 'qs';
 import Joi from 'joi';
 import moment from 'moment';
+import { PayrollInstance } from '@src/models/postgresql/tb_payroll';
+
+interface ApiIn extends EmployeeInstance {
+    lastPayroll : PayrollInstance
+}
 
 class Employee extends BaseController {
 

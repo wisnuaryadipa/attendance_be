@@ -1,3 +1,4 @@
+
 import express from 'express';
 import models from '@src/models/postgresql';
 import { IEmployee, IBaseEmployee } from '@src/interfaces/db/IEmployee';
@@ -146,6 +147,26 @@ class EmployeeService {
 
     addEmployee = async (employee: IBaseEmployee) => {
         return await models.Employee.create(employee);
+    }
+
+    getBeforeEmployee = async (employeeId: number) => {
+        return await models.Employee.findAll({
+            where: {
+                machineId: {[Op.lt]: employeeId}
+            },
+            limit: 1,
+            order: [['machine_id', 'DESC']]
+        })
+    }
+
+    getAfterEmployee = async (employeeId: number) => {
+        return await models.Employee.findAll({
+            where: {
+                machineId: {[Op.gt]: employeeId}
+            },
+            order: [['machine_id', 'ASC']],
+            limit: 1
+        })
     }
     
 }

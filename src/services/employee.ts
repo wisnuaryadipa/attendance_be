@@ -168,6 +168,10 @@ class EmployeeService {
             limit: 1
         })
     }
+
+    getCountEmployees = async () => {
+        return await models.Employee.count();
+    }
     
 }
 

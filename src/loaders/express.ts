@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import {IError} from '@src/interfaces/IError';
 import config from '@src/config';
-import Logger from '@src/loaders/Logger';
+import Logger from 'src/loaders/logger';
 import routerCollection from '@src/router'
 
 

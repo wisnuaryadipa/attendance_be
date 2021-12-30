@@ -81,22 +81,28 @@ class EmployeeService {
             inputedPayroll: {[Op.or]: [null, {[Op.not]: null}]},
             payroll: {},
             attendance: {},
-            division: {}
+            division: {},
+            search: { [Op.iLike]: `%%` } ,
+
         };
-        console.log(filter)
+        
         if (filter) {
-            where.payroll["year"] = filter.year;
-            where.payroll["month"] = filter.month;
+            filter.year && (where.payroll["year"] = filter.year);
+            filter.month && (where.payroll["month"] = filter.month);
+            filter.search && (where.search = { [Op.iLike]: `%${filter.search}%` })
             if (filter.inputedPayroll === "1") { where.inputedPayroll = null }
             if (filter.inputedPayroll === "2") { where.inputedPayroll = {[Op.not]: null} }
         } else {
-
+            
         }
-
+        console.log(where.search)
         return await models.Employee.findAll({
             order:[['machine_id', 'ASC']], 
             where: {
-                '$payrolls$': where.inputedPayroll
+                '$payrolls$': where.inputedPayroll,
+                [Op.or]: [
+                    { 'name': where.search  },
+                ],
             },
             include: [
                 { model: model.Position, as: "position", include: [{

@@ -2,15 +2,30 @@ import express, {Request, Response} from 'express';
 import { BaseController } from '@src/controllers/api';
 import { IOptions } from '@src/interfaces/IResponse';
 import service from '@src/services/employee';
-import model from '@src/models/postgresql/index'
+import model from '@src/models/postgresql/index';
+import Joi from 'joi';
 
 class EmployeeController extends BaseController {
+
+    requestValidationSchema = {
+        body: Joi.object({}).required(),
+        query: Joi.object({
+            search: Joi.string(),
+        }).required(),
+        header: Joi.object({}).required().unknown(true),
+        params: Joi.object({}).required()
+    }
 
 
     requestHandler = async (req: Request, res: Response) => {
         try {
+            const validateRequest = await this.validateRequest(req);
+            const {search} = await validateRequest.query;
+            const filter = {
+                search: search
+            }
 
-            const data = await service.getEmployees();
+            const data = await service.getEmployees({filter});
             this.responseOption = {
                 ...this.responseOption, 
                 data:data, 

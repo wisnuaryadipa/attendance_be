@@ -6,6 +6,7 @@ import { BaseController } from "@src/controllers/api";
 import {IBaseDivision} from '@src/interfaces/db/IDivision'
 import { IOptions } from '@src/interfaces/IResponse';
 import ApplicationError from '@src/errors/application-error';
+import { AttendanceInstance } from '@src/models/postgresql/tb_attendance';
 
 class Attendance extends BaseController {
 
@@ -23,7 +24,7 @@ class Attendance extends BaseController {
 
     requestHandler = async (req: Request, res: Response) => { 
         try { 
-            
+            let data = [] as AttendanceInstance[];
             const _reqValidate = await this.validateRequest(req)
             let {body, params} = _reqValidate;
            console.log(body)
@@ -32,7 +33,10 @@ class Attendance extends BaseController {
                 year: body.year
             }
             
-            const data = await services.attendance.getAttendanceFilter(parseInt(params.employeeId), filter);
+
+            const employee = await services.employee.getEmployeeById(parseInt(params.employeeId))
+            if(employee) {data = await services.attendance.getAttendanceFilter(employee.machineId!, filter);}
+            
             this.responseOption = {
                 ...this.responseOption, 
                 data:data, 

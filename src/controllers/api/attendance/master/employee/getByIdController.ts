@@ -22,6 +22,7 @@ class EmployeeController extends BaseController {
         try {
 
             const data = await employeeServices.getEmployeeById(parseInt(id));
+            console.log(data)
             this.responseOption = {
                 ...this.responseOption, 
                 data:data, 

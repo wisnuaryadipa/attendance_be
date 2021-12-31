@@ -4,7 +4,7 @@ import { Nullable } from '@src/types/common';
 import sequelize from '@src/loaders/sequelize';
 import Position from './tm_position';
 
-interface AttendanceInstance extends Model, IBaseAttendance {}
+export interface AttendanceInstance extends Model, IBaseAttendance {}
 
 // class Attendance extends Model<IBaseAttendance> implements IBaseAttendance {
 //   public id?: number;

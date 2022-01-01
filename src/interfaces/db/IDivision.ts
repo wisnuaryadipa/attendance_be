@@ -4,6 +4,7 @@ export interface IBaseDivision {
     createdAt: Date;
     updatedAt: Date;
     status: number;
+    visible?: number;
 }
 
 export interface IDivision extends IBaseDivision {

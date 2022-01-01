@@ -9,6 +9,7 @@ export interface IBasePosition {
     createdAt: Date;
     updatedAt: Date;
     status: string;
+    visible?: number;
 }
 
 export interface IPosition extends IBasePosition {

@@ -13,6 +13,7 @@ export interface IBaseAttendance {
     createdAt: Date;
     updatedAt: Date;
     workDuration?: Nullable<number>;
+    status?: number;
 }
 
 export interface IAttendance extends IBaseAttendance {

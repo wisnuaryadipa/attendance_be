@@ -20,6 +20,7 @@ export interface IBasePayroll {
     createdAt: Date;
     updatedAt: Date;
     selectedSalaryType: boolean;
+    status?: number;
 }
 
 export interface IPayroll extends IBasePayroll {

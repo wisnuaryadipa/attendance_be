@@ -42,8 +42,6 @@ export const loadRealation = (modelColl: ModelCollection) => {
     modelColl.Payroll.belongsTo( modelColl.Employee, { 
         foreignKey: 'employeeId', targetKey: 'machineId', as: 'employee' 
     });
-
-    
 }
 
 export const IncludeList = (model: ModelCollection) => {

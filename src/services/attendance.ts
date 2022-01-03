@@ -50,6 +50,7 @@ class AttendanceService {
         return await model.Attendance.findAll({ 
             where:  {
                 [Op.and]: [
+                    Sequelize.where( Sequelize.fn("substring", Sequelize.col("date"), 7, 4), {[Op.eq]: filter.year.toString()}),
                     Sequelize.where( Sequelize.fn("substring", Sequelize.col("date"), 4, 2), {[Op.eq]: filter.month.toString()}),
                     _where
                 ]

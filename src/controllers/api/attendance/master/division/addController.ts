@@ -21,6 +21,9 @@ class Division extends BaseController {
         try { 
             const _reqValidate = await this.validateRequest(req)
             const { name } = _reqValidate.body;
+            const checkDivisionName = await services.division.getDivisionByName(name);
+            if(checkDivisionName){throw {message:"Division Name Already Stored on Database !"}}
+
             const newDivision: IBaseDivision = {
                 name: name!.toString(),
                 createdAt: new Date(moment().format('YYYY-MM-DD HH:mm:ss')),
@@ -40,8 +43,7 @@ class Division extends BaseController {
             console.log(err);
             this.responseOption = {
                 ...this.responseOption, 
-                message:err, 
-                status: 500
+                ...err
             }
         }
         

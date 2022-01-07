@@ -38,6 +38,9 @@ class Position extends BaseController {
         try { 
             const _reqValidate = await this.validateRequest(req)
             const _body: IReqBody = _reqValidate.body;
+            const checkPositionName = await services.position.getPositionByName(_body.name);
+            if(checkPositionName){throw {message:"Division Name Already Stored on Database !"}}
+            
             const newPosition = { ..._body,
                 createdAt: new Date(moment().format('YYYY-MM-DD HH:mm:ss')),
                 updatedAt: new Date(moment().format('YYYY-MM-DD HH:mm:ss')),

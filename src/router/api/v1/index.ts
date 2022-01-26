@@ -5,7 +5,11 @@ import multer from 'multer';
 
 const v1 = Router();
 
-v1.post('/status', multer().single('file'), controller.apiControllers.importAttendanceController.requestHandler);
+v1.post('/status', multer().single('file'), (req, res, next) => {
+    req.setTimeout(0);
+    next();
+}
+, controller.apiControllers.importAttendanceController.requestHandler);
 
 
 v1.get('/master/division/get-all', controller.apiControllers.attendanceControllers.master.division.getAll.requestHandler);

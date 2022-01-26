@@ -30,7 +30,7 @@ class Controller extends BaseController {
                 let attendanceJson = this.parseExcelToJson(req.file);
                 let attendJson = this.initiateAttendJson(attendanceJson);
                 attendJson = this.addWorkDurationPropertiy(attendJson);
-                this.storeToDb(attendJson)
+                await this.storeToDb(attendJson)
 
                 option.status = 200;
                 option.message = "success";
@@ -47,6 +47,7 @@ class Controller extends BaseController {
     }
 
     storeToDb = async (attendances: any) => {
+        let number = 0;
 
         const passAttendanceToType = (attendance: any) : IBaseAttendance => {
             let _attendance: any = {};
@@ -69,38 +70,41 @@ class Controller extends BaseController {
         }
 
         for await (const attendance of attendances) {
+            number = number + 1;
             let _attendance: IBaseAttendance = passAttendanceToType(attendance);
 
             const prevDate: string = moment(attendance.Date, 'DD/MM/YYYY')
             .subtract('1', 'days')
             .format('DD/MM/YYYY');
             
-            const earlyDayCheckout = this.findCheckOutYesterday(attendance.listTimeAttend) 
 
-            // const currentDateCheck = await services.attendance.getAttendanceByDateEmployeeId(attendance['AC-No'], attendance.Date)
+            const currentDateCheck = await services.attendance.getAttendanceByDateEmployeeId(attendance['AC-No'], attendance.Date)
 
-            // if(!currentDateCheck) {
-                // const storing = await services.attendance.addAttendance(_attendance);
-            // }
+            if(!currentDateCheck) {
+                const storing = await services.attendance.addAttendance(_attendance);
+                const earlyDayCheckout = this.findCheckOutYesterday(attendance.listTimeAttend) 
 
-            if(earlyDayCheckout){
-                const prevAttendance = await services.attendance
-                .getAttendanceByDateEmployeeId(attendance['AC-No'], prevDate);
-                if(prevAttendance){
-                    prevAttendance.checkOut = this.convertDateStringToISO(
-                        _attendance.date, 
-                        earlyDayCheckout.hour, 
-                        earlyDayCheckout.minute)
-                    prevAttendance.workDuration = this.countWorkDuration(
-                        prevAttendance.checkIn,
-                        prevAttendance.checkOut);
-                    prevAttendance.save();
-                    console.log(prevAttendance.workDuration = this.countWorkDuration(
-                        prevAttendance.checkIn,
-                        prevAttendance.checkOut))
+                if(earlyDayCheckout){
+                    const prevAttendance = await services.attendance
+                    .getAttendanceByDateEmployeeId(attendance['AC-No'], prevDate);
+                    if(prevAttendance){
+                        prevAttendance.checkOut = this.convertDateStringToISO(
+                            _attendance.date, 
+                            earlyDayCheckout.hour, 
+                            earlyDayCheckout.minute)
+                        prevAttendance.workDuration = this.countWorkDuration(
+                            prevAttendance.checkIn,
+                            prevAttendance.checkOut);
+                        prevAttendance.save();
+                        console.log(prevAttendance.workDuration = this.countWorkDuration(
+                            prevAttendance.checkIn,
+                            prevAttendance.checkOut))
+                    }
                 }
             }
+            
         }
+        return number;
     }
 
     initiateAttendJson = (attendancesJson) => {

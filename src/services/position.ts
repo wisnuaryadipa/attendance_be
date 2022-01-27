@@ -4,7 +4,7 @@ import model from '@src/models/postgresql';
 import {IBasePosition, IPosition} from '@src/interfaces/db/IPosition';
 import Division from 'src/models/postgresql/tm_division';
 
-const includeEmployees = [{model: Employee, as: "employees"}, {model: Division, as: "division"}]
+const includeEmployees = [{model: Division, as: "division"}]
 const includeDivision = [{model: Division, as: "division"}]
 const {Sequelize, Position} = model; 
 

@@ -1,3 +1,4 @@
+import { addZero } from '@src/helper/AddZero';
 import express, {Request, Response} from 'express';
 import moment from 'moment';
 import Joi from 'joi';
@@ -7,6 +8,7 @@ import {IBaseDivision} from '@src/interfaces/db/IDivision'
 import { IOptions } from '@src/interfaces/IResponse';
 import ApplicationError from '@src/errors/application-error';
 import { AttendanceInstance } from '@src/models/postgresql/tb_attendance';
+
 
 class Attendance extends BaseController {
 
@@ -21,20 +23,20 @@ class Attendance extends BaseController {
         }).required(), 
         header: Joi.object({}).required()
     }
-
+    
     requestHandler = async (req: Request, res: Response) => { 
+        
         try { 
             let data = [] as AttendanceInstance[];
             const _reqValidate = await this.validateRequest(req)
             let {body, params} = _reqValidate;
-           console.log(body)
             const filter = {
-                month: body.month,
+                month: addZero(body.month, 2),
                 year: body.year
             }
             
 
-            const employee = await services.employee.getEmployeeById(parseInt(params.employeeId))
+            const employee = await services.employee.getEmployeeById(parseInt(params.employeeId), [])
             if(employee) {data = await services.attendance.getAttendanceFilter(employee.machineId!, filter);}
             
             this.responseOption = {
@@ -50,7 +52,7 @@ class Attendance extends BaseController {
             console.log(err);
             this.responseOption = {
                 ...this.responseOption, 
-                message:err, 
+                message:err,
                 status: 500
             }
 

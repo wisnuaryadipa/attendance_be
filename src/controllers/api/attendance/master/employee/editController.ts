@@ -32,6 +32,7 @@ class Employee extends BaseController {
             description:Joi.string().allow(""),
             flatSalary:Joi.number().empty("").default(null),
             activeFlatSalary:Joi.boolean(),
+            rekeningNumber:Joi.string(),
         }).or('name', 'role', 'division', 'status', 'machineId').required(),
         query: Joi.object({}).required(),
         params: Joi.object({

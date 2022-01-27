@@ -21,6 +21,7 @@ export interface IBaseEmployee {
     description?:string;
     flatSalary?:number;
     activeFlatSalary?:boolean;
+    rekeningNumber:string;
     visible?:number;
 }
 

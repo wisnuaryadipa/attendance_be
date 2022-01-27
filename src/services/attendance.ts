@@ -59,12 +59,6 @@ class AttendanceService {
 
         });
     }
-
-    // editAttendanceByDateEmployeeId = async (date: string, employeeId: number, attendance: any) => {
-    //     const convertedDate = moment(date).format('YYYY-MM-DD');
-    //     return await model.tb_attendance.update(attendance, { where: {date: convertedDate, }})
-
-    // }
 }
 
 export default new AttendanceService();

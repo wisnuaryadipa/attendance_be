@@ -41,5 +41,11 @@ v1.put('/payroll/:employeeId/:year/:month', controller.apiControllers.PayrollCon
 v1.get('/payroll/last-input/:employeeId', controller.apiControllers.PayrollController.getLastInputByEmployeeId.requestHandler);
 
 
+v1.post('/convert/fingerprint-raw', multer().single('file'), (req, res, next) => {
+    req.setTimeout(0);
+    next();
+}
+, controller.apiControllers.convertFingerPrintRaw.requestHandler);
+
 
 export default v1;

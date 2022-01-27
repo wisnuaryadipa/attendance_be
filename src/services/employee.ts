@@ -73,7 +73,27 @@ let includePosition : Includeable[] = [
     {model: model.Position, as: "position", include: [{
         model: model.Division, as: "division"
     }]}, 
-    {model: model.Attendance, as: "attendances"}]
+    {model: model.Attendance, as: "attendances"}
+]
+
+const buildInclude = (arr: Array<string>) => {
+    let _arrIncludes : Includeable[] = []
+    for (const key in arr) {
+        const splited = arr[key].split('.');
+        if (splited.length > 1) {
+            for (const key in splited) {
+                if (key === '0'){
+                    _arrIncludes.push(_includeList[splited[key]])
+                } else {
+                    
+                }
+            }
+
+        } else {
+            _arrIncludes.push(_includeList[splited[key]])
+        }
+    }
+}
 
 class EmployeeService {
     getEmployees = async ({filter = undefined as any, includes = undefined as any} = {}) => {
@@ -113,7 +133,8 @@ class EmployeeService {
         });
     }
 
-    getEmployeeById = async (employeeId: number) => {
+    getEmployeeById = async (employeeId: number, include : string | Array<string> = "") => {
+
         return await models.Employee.findOne({ 
             order:[['id', 'ASC']], 
             where: {'id': employeeId}, 

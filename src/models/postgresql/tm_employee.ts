@@ -228,6 +228,10 @@ const Employee = sequelize.define<EmployeeInstance>('tm_employee', {
         type: DataTypes.BOOLEAN,
         field: 'active_flat_salary'
     },
+    rekeningNumber: {
+        type: DataTypes.STRING,
+        field: 'rekening_number'
+    }
   }, {
     schema: 'attendance',
     // Another option

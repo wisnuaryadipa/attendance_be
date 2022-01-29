@@ -49,43 +49,53 @@ export const IncludeList = (model: ModelCollection) => {
     return ({
         position: {
             model: model.Position,
-            as: 'position'
+            as: 'position',
+            include: []
         },
         positions: {
             model: model.Position,
-            as: 'positions'
+            as: 'positions',
+            include: []
         },
         employee: {
             model: model.Employee,
-            as: 'employee'
+            as: 'employee',
+            include: []
         },
         employees: {
             model: model.Employee,
-            as: 'employees'
+            as: 'employees',
+            include: []
         },
         division: {
             model: model.Division,
-            as: 'division'
+            as: 'division',
+            include: []
         },
         divisions: {
             model: model.Division,
-            as: 'divisions'
+            as: 'divisions',
+            include: []
         },
         attendance: {
             model: model.Attendance,
-            as: 'attendance'
+            as: 'attendance',
+            include: []
         },
         attendances: {
             model: model.Attendance,
-            as: 'attendances'
+            as: 'attendances',
+            include: []
         },
         payroll: {
             model: model.Payroll,
-            as: 'payroll'
+            as: 'payroll',
+            include: []
         },
         payrolls: {
             model: model.Payroll,
-            as: 'payrolls'
+            as: 'payrolls',
+            include: []
         },
     })
     

@@ -11,6 +11,7 @@ import { isEmptyObject } from '@src/helper/main';
 import { Op } from 'sequelize';
 import _ from 'lodash';
 import { number } from 'joi';
+import util from 'util';
 
 
 const arch = {
@@ -85,73 +86,57 @@ const _recurX = () => {
 
 const buildInclude = (arr: Array<string>) => {
     let _arrIncludes : Includeable[] = []
+
+    console.log(arr)
     for (const key in arr) {
         const splited = arr[key].split('.');
         let __incld = _.find(_arrIncludes, {as: splited[key]});
         let _incld: Includeable = __incld ? __incld : {} as Includeable;
+        let _varIndex: string = "_arrIncludes";
         if (splited.length > 1) {
-            const _arrIndex: number[] = [];
-            let _varIndex: string = "_arrIncludes";
-            for (const key in splited) {
-                
-                if (key === '0'){
-                    // Do this condition when values of array didn't have dot inside
-                    // ( employee, position, division )
-                    // not (employee.attendance, position.attendance)
-                    let _indx = 0;
-                    const _child: any[] = eval(_varIndex);
-                    const isIncldEmpty = isEmptyObject(_child);
-                    if(isIncldEmpty){
-                        // Do this condition if array has empty value
-                        _incld = _includeList[splited[key]]
-                        _indx = 0;
-                        _
-                    } else {
-                        // Do this condiition if array has at least one values
-                        // doesn't push nothing becouse already has this relation
-                        _indx = _.findIndex(_child, {as: splited[key]});
-                    }
+            // Do this condition when values of array didn't have dot inside
+            // ( employee, position, division )
+            // not (employee.attendance, position.attendance)
+            for (const key1 in splited) {
+                let _indx = 0;
+                let _child: any[] = [];
 
-                    _varIndex = _varIndex + `[${_indx}]`
-                    _arrIndex.push(_indx);
+                if (key1 === '0'){
+
                 } else {
-                    // Do this condition when values of array didn't have dot inside
-                    // ( employee, position, division )
-                    // not (employee.attendance, position.attendance)
-                    let _indx = 0;
-                    const _arrChildIncld = []
-                    const _child: any[] = eval(_varIndex + ".include");
-                    const isIncldEmpty = isEmptyObject(_child);
-                    if(isIncldEmpty){
-                        // Do this condition if array has empty value
-                        _incld = _includeList[splited[key]]
-                        _indx = 0;
-                        _
-                    } else {
-                        // Do this condiition if array has at least one values
-                        // doesn't push nothing becouse already has this relation
-                        _indx = _.findIndex(_arrIncludes, {as: splited[key]});
-                    }
-                    _varIndex = _varIndex + `[${_indx}]`
-                    _arrIndex.push(_indx);
-                    const _findChild = _.find(_child, {as: splited[key]})
-
-                    _varIndex
-                    for (let i = 0; i < parseInt(key); i++) {
-                        
-                        
-                    }
-
+                    _varIndex = _varIndex + ".include";
                 }
+                _child = eval(_varIndex);
+                if(_child.length <= 0){
+                    // Do this condition if array has empty value
+                    _child.push(_includeList[splited[key1]]) 
+                    _indx = 0;
+                } else {
+                    // Do this condiition if array has at least one values
+                    // doesn't push nothing becouse already has this relation
+                    _indx = _.findIndex(_child, {as: splited[key]});
+                    if (_indx == -1) {
+                        // Do this condition if there is no item on include array
+                        _child.push(_includeList[splited[key1]])
+                        _indx = _child.length-1;
+                    } else {
+                        
+                    }
+                }
+                _varIndex = _varIndex + `[${_indx}]`
             }
+
         } else {
+            // Do this condition when values of array have dot inside
+            // ( employee, position, division )
+            // not (employee.attendance, position.attendance)
             const isIncldEmpty = isEmptyObject(_incld);
             if(isIncldEmpty){
                 _incld = _includeList[splited[key]]
             }
         }
-        _arrIncludes.push(_incld)
     }
+    return _arrIncludes
 }
 
 class EmployeeService {
@@ -257,6 +242,14 @@ class EmployeeService {
 
     getCountEmployees = async () => {
         return await models.Employee.count();
+    }
+
+    getTest = async (include : string | Array<string> = "") => {
+        let _convertedToArray = [] as Array<string>
+        (typeof include == 'string') ? _convertedToArray.push(include) : _convertedToArray = include;
+        const result = buildInclude(_convertedToArray)
+
+        console.log(util.inspect(result, false, null, true))
     }
     
 }

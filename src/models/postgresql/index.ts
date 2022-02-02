@@ -7,6 +7,7 @@ import Position from './tm_position';
 import { Sequelize, ModelCtor } from 'sequelize';
 import Payroll from './tb_payroll';
 import { loadRealation} from './realation';
+import SalaryEmployee from './tb_salary_employee';
 
 
 interface IModelCollection {
@@ -16,6 +17,7 @@ interface IModelCollection {
 
 const modelCollection = {
     AttendanceMachine: AttendanceMachine,
+    SalaryEmployee: SalaryEmployee,
     Division : Division,
     Employee : Employee,
     Attendance : Attendance,
@@ -24,13 +26,6 @@ const modelCollection = {
     Sequelize: sequelize.Sequelize,
     sequelize: sequelize
 }
-
-// Object.keys(modelCollection).forEach((modelName) => {
-//     if (modelCollection[modelName].associate) {
-//         modelCollection[modelName].associate(modelCollection)
-//     }
-//   })
-
 
 export type MyModel = typeof modelCollection;
 export type ModelCollection = typeof modelCollection;

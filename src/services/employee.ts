@@ -186,6 +186,14 @@ class EmployeeService {
         });
     }
 
+    getEmployeeByMachineId = async (machineId: number) => {
+        return await models.Employee.findOne({
+            order:[['id', 'ASC']],
+            where: {'machineId': machineId},
+            include: includePosition
+        })
+    }
+
     getEmployeeByDivision = async (divisionId: number) => {
         return await models.Employee.findAll({ where: {division: divisionId}});
     }

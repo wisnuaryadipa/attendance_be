@@ -47,5 +47,11 @@ v1.post('/convert/fingerprint-raw', multer().single('file'), (req, res, next) =>
 }
 , controller.apiControllers.convertFingerPrintRaw.requestHandler);
 
+v1.post('/import/master-salary-employee', multer().single('file'), (req, res, next) => {
+    req.setTimeout(0);
+    next();
+}
+, controller.apiControllers.importMasterSalaryController.requestHandler);
+
 
 export default v1;

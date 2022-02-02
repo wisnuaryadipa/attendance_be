@@ -2,6 +2,7 @@ import { IAttendance } from './IAttendance';
 import {IPosition} from './IPosition'
 
 export interface IBaseEmployee {
+    id: number;
     name: string;
     role?: string;
     division?: number;
@@ -22,11 +23,13 @@ export interface IBaseEmployee {
     flatSalary?:number;
     activeFlatSalary?:boolean;
     rekeningNumber:string;
+    dailySalary: number;
+    holidaySalary: number;
+    overtimeSalary: number;
     visible?:number;
 }
 
 export interface IEmployee extends IBaseEmployee {
-    id: number;
     readonly position?: IPosition
     readonly attendances?: IAttendance[];
 

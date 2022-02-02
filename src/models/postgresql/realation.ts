@@ -42,6 +42,14 @@ export const loadRealation = (modelColl: ModelCollection) => {
     modelColl.Payroll.belongsTo( modelColl.Employee, { 
         foreignKey: 'employeeId', targetKey: 'machineId', as: 'employee' 
     });
+
+    modelColl.SalaryEmployee.belongsTo( modelColl.Employee, {
+        foreignKey: 'employeeId', targetKey: 'id', as: 'employee'
+    });
+
+    modelColl.Employee.hasMany(modelColl.SalaryEmployee, {
+        foreignKey: 'employeeId', sourceKey: 'id', as: 'salaries'
+    });
 }
 
 export const IncludeList = (model: ModelCollection) => {
@@ -97,6 +105,16 @@ export const IncludeList = (model: ModelCollection) => {
             as: 'payrolls',
             include: []
         },
+        salaies: {
+            model: model.SalaryEmployee,
+            as: 'salaries',
+            include: []
+        },
+        salary: {
+            model: model.SalaryEmployee,
+            as: 'salary',
+            include: []
+        }
     })
     
 }

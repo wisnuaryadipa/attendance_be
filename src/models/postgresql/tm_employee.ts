@@ -231,7 +231,22 @@ const Employee = sequelize.define<EmployeeInstance>('tm_employee', {
     rekeningNumber: {
         type: DataTypes.STRING,
         field: 'rekening_number'
-    }
+    },
+    dailySalary: {
+      type: DataTypes.NUMBER,
+      allowNull: true,
+      field: 'daily_salary'
+    },
+    holidaySalary: {
+      type: DataTypes.NUMBER,
+      allowNull: true,
+      field: 'holiday_salary'
+    },
+    overtimeSalary: {
+      type: DataTypes.NUMBER,
+      allowNull: true,
+      field: 'overtime_salary'
+    },
   }, {
     schema: 'attendance',
     // Another option

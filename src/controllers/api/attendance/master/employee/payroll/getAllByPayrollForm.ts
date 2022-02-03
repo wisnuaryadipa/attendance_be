@@ -35,7 +35,7 @@ class Employee extends BaseController {
             }
             
 
-            const data = await employeeService.getEmployees({filter: filter});
+            const data = await employeeService.getEmployeesPayroll({filter: filter});
             this.responseOption = {
                 ...this.responseOption, 
                 data:data, 

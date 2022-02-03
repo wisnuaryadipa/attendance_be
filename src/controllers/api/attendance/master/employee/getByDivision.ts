@@ -20,7 +20,8 @@ class EmployeeController extends BaseController {
         const {id} = await validateRequest.body;
         try {
 
-            const data = await service.getEmployeeByDivision(id);
+            const includes = ['position', 'position.division']
+            const data = await service.getEmployeeByDivision(id, includes);
             this.responseOption = {
                 ...this.responseOption, 
                 data:data, 

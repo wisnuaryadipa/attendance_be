@@ -50,6 +50,14 @@ export const loadRealation = (modelColl: ModelCollection) => {
     modelColl.Employee.hasMany(modelColl.SalaryEmployee, {
         foreignKey: 'employeeId', sourceKey: 'id', as: 'salaries'
     });
+    
+    modelColl.Employee.hasMany(modelColl.WeeklyPayment, {
+        foreignKey: 'employeeId', sourceKey: 'id', as: 'weeklyPayments'
+    });
+
+    modelColl.WeeklyPayment.belongsTo( modelColl.Employee, {
+        foreignKey: 'employeeId', targetKey: 'id', as: 'employee'
+    });
 }
 
 export const IncludeList = (model: ModelCollection) => {
@@ -113,6 +121,16 @@ export const IncludeList = (model: ModelCollection) => {
         salary: {
             model: model.SalaryEmployee,
             as: 'salary',
+            include: []
+        },
+        weeklyPayment: {
+            model: model.WeeklyPayment,
+            as: 'weeklyPayment',
+            include: []
+        },
+        weeklyPayments: {
+            model: model.WeeklyPayment,
+            as: 'weeklyPayments',
             include: []
         }
     })

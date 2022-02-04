@@ -1,41 +1,46 @@
-import { ISalaryEmployee, IBaseSalaryEmployee } from '@src/interfaces/db/ISalaryEmployee';
+import { IAttendance, IBaseAttendance } from '@src/interfaces/db/IAttendance';
 import {DataTypes, Sequelize, Model} from 'sequelize';
 import { Nullable } from '@src/types/common';
 import sequelize from '@src/loaders/sequelize';
 import Position from './tm_position';
 
-export interface SalaryEmployeeInstance extends Model, IBaseSalaryEmployee {}
+export interface WeeklyPaymentInstance extends Model, IBaseAttendance {}
 
-const SalaryEmployee = sequelize.define<SalaryEmployeeInstance>('tb_salary_employee', {
+const WeeklyPayment = sequelize.define<WeeklyPaymentInstance>('tb_weekly_payment', {
+    employeeId: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+      field: 'employee_id'
+    },
     machineId: {
       type: DataTypes.NUMBER,
       allowNull: false,
       field: 'machine_id'
     },
-    dailySalary: {
+    totalWorkingDays: {
       type: DataTypes.NUMBER,
       allowNull: true,
-      field: 'daily_salary'
+      field: 'total_working_days'
     },
-    holidaySalary: {
+    totalWorkingHolidays: {
       type: DataTypes.NUMBER,
       allowNull: true,
-      field: 'holiday_salary'
+      field: 'total_working_holidays'
     },
-    overtimeSalary: {
+    totalOvertime: {
       type: DataTypes.NUMBER,
       allowNull: true,
-      field: 'overtime_salary'
+      field: 'total_overtime'
     },
-    bankAccountId: {
+    description: {
       type: DataTypes.STRING,
       allowNull: true,
-      field: 'bank_account_id'
+      field: 'description'
     },
-    employeeId: {
+    status: {
       type: DataTypes.NUMBER,
       allowNull: true,
-      field: 'employee_id'
+      field: 'status'
     },
     createdAt: {
         type: DataTypes.DATE,
@@ -47,6 +52,11 @@ const SalaryEmployee = sequelize.define<SalaryEmployeeInstance>('tb_salary_emplo
         defaultValue: DataTypes.NOW,
         field: 'updated_at'
     },
+    paymentDate: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        field: 'paymentDate'
+    },
   }, {
     schema: 'attendance',
     createdAt: true,
@@ -55,4 +65,4 @@ const SalaryEmployee = sequelize.define<SalaryEmployeeInstance>('tb_salary_emplo
   });
 
   
-export default SalaryEmployee;
+export default WeeklyPayment;

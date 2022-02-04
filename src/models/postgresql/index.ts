@@ -8,6 +8,7 @@ import { Sequelize, ModelCtor } from 'sequelize';
 import Payroll from './tb_payroll';
 import { loadRealation} from './realation';
 import SalaryEmployee from './tb_salary_employee';
+import WeeklyPayment from './tb_weekly_payment';
 
 
 interface IModelCollection {
@@ -18,6 +19,7 @@ interface IModelCollection {
 const modelCollection = {
     AttendanceMachine: AttendanceMachine,
     SalaryEmployee: SalaryEmployee,
+    WeeklyPayment: WeeklyPayment,
     Division : Division,
     Employee : Employee,
     Attendance : Attendance,

@@ -1,10 +1,11 @@
 import { IAttendance, IBaseAttendance } from '@src/interfaces/db/IAttendance';
+import { IBaseWeeklyPayment } from 'src/interfaces/db/IWeeklyPayment';
 import {DataTypes, Sequelize, Model} from 'sequelize';
 import { Nullable } from '@src/types/common';
 import sequelize from '@src/loaders/sequelize';
 import Position from './tm_position';
 
-export interface WeeklyPaymentInstance extends Model, IBaseAttendance {}
+export interface WeeklyPaymentInstance extends Model, IBaseWeeklyPayment {}
 
 const WeeklyPayment = sequelize.define<WeeklyPaymentInstance>('tb_weekly_payment', {
     employeeId: {
@@ -56,6 +57,11 @@ const WeeklyPayment = sequelize.define<WeeklyPaymentInstance>('tb_weekly_payment
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
         field: 'paymentDate'
+    },
+    lotNumber: {
+        type: DataTypes.NUMBER,
+        allowNull: true,
+        field: 'lot_number'
     },
   }, {
     schema: 'attendance',

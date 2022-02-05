@@ -1,7 +1,10 @@
+import { IBaseWeeklyPayment } from './../../../../interfaces/db/IWeeklyPayment';
 import {Request, Response} from 'express';
 import {BaseController} from '@src/controllers/api/baseController'
 import { IOptions } from '@src/interfaces/IResponse';
+import services from '@src/services'
 import xlsx from 'xlsx';
+import moment from 'moment';
 
 
 class Controller extends BaseController {
@@ -16,6 +19,7 @@ class Controller extends BaseController {
                 this.sendResponse(req, res, option);
             } else {
                 let _fileJson = this.parseExcelToJson(req.file);
+                const result = this.storeToDB(_fileJson, req.body['datePayment'])
 
                 option.status = 200;
                 option.message = "success";
@@ -38,11 +42,28 @@ class Controller extends BaseController {
         return jsonXlsx;
     }
 
-    storeToDB = (convertedImportFile, dateSubmit) => {
-        
+    storeToDB = async (employeesAttendances: any[], dateSubmit: string) => {
+        const arrRes = [] as any[];
+        for (const attendanceKey in employeesAttendances) {
+            const _employee = await services.employee.getEmployeeByMachineId(employeesAttendances[attendanceKey].machineId);
+            const lastLotNumber = await services.weeklyPayment.getLastLotNumber();
+            const _weeklyPayment = {
+                employeeId: _employee?.id,
+                machineId: employeesAttendances[attendanceKey].machineId,
+                totalOvertime: employeesAttendances[attendanceKey].total_jam_lembur,
+                totalWorkingDays: employeesAttendances[attendanceKey].total_hari_kerja,
+                totalWorkingHolidays: employeesAttendances[attendanceKey].total_hari_libur,
+                description: employeesAttendances[attendanceKey].keterangan,
+                status: 1,
+                paymentDate: moment(dateSubmit).toDate(),
+                lotNumber: lastLotNumber ? lastLotNumber.lotNumber + 1 : 1
+            } as IBaseWeeklyPayment
+
+            const resInputPayment = await services.weeklyPayment.addWeeklyPayment(_weeklyPayment);
+            arrRes.push(resInputPayment);
+        }
+        return arrRes;
     }
-
-
     
 }
 

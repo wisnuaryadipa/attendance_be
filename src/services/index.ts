@@ -4,6 +4,7 @@ import attendanceSerives from './attendance';
 import positionServices from './position';
 import payrollServices from './payroll';
 import salaryEmployeeServices from './salaryEmployee';
+import weeklyPaymentServices from './weeklyPayment';
 
 export default {
     division: divisionServices,
@@ -11,5 +12,6 @@ export default {
     attendance: attendanceSerives,
     position: positionServices,
     payroll: payrollServices,
-    salaryEmployee: salaryEmployeeServices
+    salaryEmployee: salaryEmployeeServices,
+    weeklyPayment: weeklyPaymentServices
 }

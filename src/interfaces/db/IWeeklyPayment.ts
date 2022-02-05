@@ -13,6 +13,7 @@ export interface IBaseWeeklyPayment {
     createdAt: Date;
     updatedAt: Date;
     paymentDate: Date;
+    lotNumber: number;
 }
 
 export interface IWeeklyPayment extends IBaseWeeklyPayment {

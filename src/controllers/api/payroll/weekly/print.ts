@@ -1,5 +1,6 @@
 import { BaseController } from '@src/controllers/api';
 import { Request, Response } from 'express';
+import services from 'src/services';
 
 
 
@@ -15,6 +16,10 @@ class Controller extends BaseController {
     }
 
     getPaymentFromDB = (date: string) => {
+
+        const result = services.salaryEmployee.getSalaries();
+
+        return result
 
     }
 

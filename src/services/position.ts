@@ -26,7 +26,7 @@ class PositionService {
     }
     getPositionByName = async (positionName: string) => {
         return await Position.findOne({where: {[Op.and]: [
-            Sequelize.where(Sequelize.fn('lower', Sequelize.col('name')), Sequelize.fn('lower', positionName))
+            Sequelize.where(Sequelize.fn('lower', Sequelize.col('tm_position.name')), Sequelize.fn('lower', positionName))
         ]}, include: includeEmployees})
     }
 }

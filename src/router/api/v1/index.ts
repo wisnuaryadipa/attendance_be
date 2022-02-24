@@ -4,6 +4,8 @@ import controller from '@src/controllers/';
 import multer from 'multer';
 import { options } from 'joi';
 
+import attendanceRoutes from './attendances';
+
 const v1 = Router();
 
 v1.post('/status', multer().single('file'), (req, res, next) => {
@@ -54,5 +56,7 @@ v1.post('/import/master-salary-employee', multer().single('file'), (req, res, ne
 }
 , controller.apiControllers.importMasterSalaryController.requestHandler);
 
+
+v1.use('/attendance', attendanceRoutes);
 
 export default v1;

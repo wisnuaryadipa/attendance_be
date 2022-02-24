@@ -6,7 +6,7 @@ import ApplicationError from '@src/errors/application-error'
 import {IOptions} from '@src/interfaces/IResponse'
 
 
-interface IRequestValidationSchemaJOI {
+export interface IRequestValidationSchemaJOI {
     body?: Joi.Schema;
     header?: Joi.Schema;
     params?: Joi.Schema;
@@ -24,17 +24,17 @@ export class BaseController {
         }
     }
 
-    public Joi = Joi;
-    sendResponse = sendResponse;
-    requestHandler!: RequestHandler;
-    validation: IRequestValidationSchemaJOI = {};
-    requestValidationSchema!: IRequestValidationSchemaJOI;
-    responseOption: IOptions = {
+    protected  Joi = Joi;
+    protected sendResponse = sendResponse;
+    protected requestHandler!: RequestHandler;
+    protected validation: IRequestValidationSchemaJOI = {};
+    protected requestValidationSchema: IRequestValidationSchemaJOI;
+    protected responseOption: IOptions = {
       status: 500, 
       message: "Error !, something wrong in your input parameter or problem on server. "
     };
     
-    validateRequest = async (req: Request) => {
+    protected validateRequest = async (req: Request) => {
         let { body, headers, params, query} = req;
         
         query = await this.requestValidationSchema.query?.validateAsync(query)

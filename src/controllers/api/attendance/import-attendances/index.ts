@@ -5,6 +5,8 @@ import {IOptions} from "@src/interfaces/IResponse"
 import Joi from 'joi';
 import xlsx from 'xlsx';
 import moment from 'moment';
+import services from "src/services";
+import { IBaseAttendanceRecord } from 'src/interfaces/db/IAttendanceRecord';
 
 
 class ImportAttendances extends BaseController {
@@ -35,7 +37,7 @@ class ImportAttendances extends BaseController {
                 jsonAttendances = this.parseExcelToJson(file);
                 
                 data = this.initiateAttendJson(jsonAttendances)
-                
+                data = await this.insertToDB(data)
             } else {
                 // Check if file is empty
                 this.responseOption = {
@@ -102,6 +104,30 @@ class ImportAttendances extends BaseController {
             })
         }
         return arrFilteredTimeAttends;
+    }
+
+    insertToDB = async (attendances) => {
+        let _addedCount = 0;
+        let _allCount = 0;
+        for await (const attendance of attendances) {
+            const employee = await services.employee.getEmployeeByMachineId(attendance['AC-No']);
+            
+            if (employee){
+                for await (const time of attendance['Time']) {
+                    const _attendance: IBaseAttendanceRecord = {
+                        employeeId: employee.id,
+                        recordTime: moment(`${attendance['Date']} ${time}`, "DD/MM/YYYY HH:mm").format("YYYY-MM-DD HH:mm"),
+                        status: 1,
+                        machineId: 1,
+                    }
+
+                    const _addRes = await services.attendanceRecord.add(_attendance)
+                    if (_addRes) { _addedCount++ }
+                }
+            }
+            _allCount++;
+        }
+        return `${_addedCount}/${_allCount}`;
     }
 
 }

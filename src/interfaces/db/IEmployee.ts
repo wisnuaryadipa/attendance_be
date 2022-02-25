@@ -11,7 +11,7 @@ export interface IBaseEmployee {
     status: number;
     machineId?: number;
     positionId?: number;
-    gender?:string;
+    gender?:number;
     employeeStatus?:string;
     hireDate?: string;
     dateOfBirth?: string;

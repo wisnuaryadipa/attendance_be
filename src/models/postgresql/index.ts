@@ -4,6 +4,7 @@ import Division from './tm_division';
 import Employee from './tm_employee';
 import Attendance from './tb_attendance';
 import Position from './tm_position';
+import AttendanceRecord from './tb_attendance_record';
 import { Sequelize, ModelCtor } from 'sequelize';
 import Payroll from './tb_payroll';
 import { loadRealation} from './realation';
@@ -23,6 +24,7 @@ const modelCollection = {
     Division : Division,
     Employee : Employee,
     Attendance : Attendance,
+    AttendanceRecord : AttendanceRecord,
     Position: Position,
     Payroll: Payroll,
     Sequelize: sequelize.Sequelize,

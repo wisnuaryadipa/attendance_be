@@ -4,7 +4,7 @@ import importAttendanceController from '@src/controllers/api/attendance/import/a
 import convertFingerPrintRaw from '@src/controllers/api/attendance/convert/fingerprintRaw'
 import attendanceControllers from '@src/controllers/api/attendance/'
 import importMasterSalaryController from '@src/controllers/api/attendance/import/masterSalaryController'
-import PayrollController from './payroll'
+import PayrollController from './payroll';
 
 const ImportAttendanceController = importAttendanceController;
 

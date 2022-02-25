@@ -5,6 +5,7 @@ import multer from 'multer';
 import { options } from 'joi';
 
 import attendanceRoutes from './attendances';
+import dummieRoutes from './dummie';
 
 const v1 = Router();
 
@@ -58,5 +59,6 @@ v1.post('/import/master-salary-employee', multer().single('file'), (req, res, ne
 
 
 v1.use('/attendance', attendanceRoutes);
+v1.use('/dummies', dummieRoutes)
 
 export default v1;

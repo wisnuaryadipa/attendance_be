@@ -9,6 +9,7 @@ import model from '@src/models/postgresql';
 
 const _includeList = IncludeList(model)
 export const buildInclude = (includeParams: Array<string> | string) => {
+
     // Input = string or string[] (attendance, attendance.employee)
     // Output = Includeable
     // Description = This function build Includeable object according to input parameter.
@@ -29,10 +30,11 @@ export const buildInclude = (includeParams: Array<string> | string) => {
         let __incld = _.find(_arrIncludes, {as: splited[key]});
         let _incld: Includeable = __incld ? __incld : {} as Includeable;
         let _varIndex: string = "_arrIncludes";
+
         if (splited.length > 1) {
-            // Do this condition when values of array didn't have dot inside
-            // ( employee, position, division )
-            // not (employee.attendance, position.attendance)
+            // Do this condition when values of array have dot inside
+            // (employee.attendance, position.attendance)
+            // not ( employee, position, division )
             for (const key1 in splited) {
                 let _indx = 0;
                 let _child: any[] = [];
@@ -63,7 +65,8 @@ export const buildInclude = (includeParams: Array<string> | string) => {
             }
 
         } else {
-            // Do this condition when values of array have dot inside
+
+            // Do this condition when values of array haven't dot inside
             // ( employee, position, division )
             // not (employee.attendance, position.attendance)
             const isIncldEmpty = isEmptyObject(_incld);

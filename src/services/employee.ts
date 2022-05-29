@@ -37,6 +37,7 @@ const _includeList = IncludeList(model)
 
 class EmployeeService {
     getEmployees = async ({filter = undefined as any, includes = undefined as any} = {}) => {
+        
         let _includes = IncludeInject(includes)
         let where: Partial<any> = {
             inputedPayroll: {[Op.or]: [null, {[Op.not]: null}]},
@@ -57,6 +58,7 @@ class EmployeeService {
             
         }
         
+        console.log(_includes)
         return await models.Employee.findAll({
             order:[['machine_id', 'ASC']], 
             where: {

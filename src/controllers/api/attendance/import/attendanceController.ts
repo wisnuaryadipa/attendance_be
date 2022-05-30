@@ -1,5 +1,6 @@
 import { Nullable } from '@src/types/common';
 import { IBaseAttendance } from './../../../../interfaces/db/IAttendance';
+import { IBaseAttendanceRaw } from 'src/interfaces/db/IAttendanceRaw';
 import express, {Request, Response} from "express";
 import {attendanceControllers, BaseController} from "@src/controllers/api/index";
 import {IOptions} from "@src/interfaces/IResponse"
@@ -18,6 +19,23 @@ interface ISessionAttend {
 
 class Controller extends BaseController {
 
+    pushToType = (attendance: any) : IBaseAttendanceRaw => {
+        // Input : Attendance data from request parameter
+        // Output : Attendance with datatype IBaseAttendance
+
+        let _attendance: IBaseAttendanceRaw = {
+            attendanceStatus: attendance,
+            attendanceTime: attendance.Time ? attendance.Time : null,
+            date: attendance.Date,
+            employeeId: attendance['AC-No'],
+            createdAt: moment().toDate(),
+            updatedAt: moment().toDate(),
+            visible: 1,
+        }
+        
+        return _attendance;
+    }
+
     requestHandler = async (req: Request, res: Response) => {
         // this.sendResponse(req, res, {data: req.file});
         let option: IOptions = {};
@@ -30,7 +48,7 @@ class Controller extends BaseController {
                 let attendanceJson = this.parseExcelToJson(req.file);
                 let attendJson = this.initiateAttendJson(attendanceJson);
                 attendJson = this.addWorkDurationPropertiy(attendJson);
-                await this.storeToDb(attendJson)
+                await this.storeToDBNew(attendJson)
 
                 option.status = 200;
                 option.message = "success";
@@ -321,6 +339,27 @@ class Controller extends BaseController {
             })[0];
         }
         return result;
+    }
+
+    storeToDBNew = async (attendances: any) => {
+        let number = 0;
+
+        for await (const attendance of attendances) {
+            number = number + 1;
+            let _attendance = this.pushToType(attendance);
+
+            const prevDate: string = moment(attendance.Date, 'DD/MM/YYYY')
+            .subtract('1', 'days')
+            .format('DD/MM/YYYY');
+
+            for await (const timeAttend of attendance.listTimeAttend){
+
+                console.log(timeAttend)
+            }
+
+            
+        }
+        return number;
     }
 
 }

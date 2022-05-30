@@ -6,7 +6,7 @@ export interface IBaseAttendanceRaw {
     employeeId: string;
     attendanceTime?: string;
     visible: number;
-    attendanceStatus: number;
+    attendanceStatus?: number;
     date: string;
     createdAt: Date;
     updatedAt: Date;

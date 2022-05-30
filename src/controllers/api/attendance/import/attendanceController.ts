@@ -1,7 +1,7 @@
 import { Nullable } from '@src/types/common';
 import { IBaseAttendance } from './../../../../interfaces/db/IAttendance';
 import express, {Request, Response} from "express";
-import {BaseController} from "@src/controllers/api/index";
+import {attendanceControllers, BaseController} from "@src/controllers/api/index";
 import {IOptions} from "@src/interfaces/IResponse"
 import xlsx from 'xlsx';
 import moment from 'moment';
@@ -128,7 +128,7 @@ class Controller extends BaseController {
 
             if(index>0 && checkOutYesterday){
                 /**
-                 * Only execute when index more than 0 prevent access empty object on index before 0
+                 * Only execute when index more than 0 prevent accessing empty object on index before 0
                  * And did register checkout on 00:01 until 03:00
                  */
                 attendancesJson[index-1]['checkOut'] = checkOutYesterday 
@@ -169,6 +169,8 @@ class Controller extends BaseController {
             const checkOut = moment(attendance.checkOut, 'DD/MM/YYYY HH:mm');
             return this.countWorkDuration(checkIn, checkOut);
         })
+        let _test = 5 as Number;
+        
         return attendances;
     }
 

@@ -10,6 +10,7 @@ import Payroll from './tb_payroll';
 import { loadRealation} from './realation';
 import SalaryEmployee from './tb_salary_employee';
 import WeeklyPayment from './tb_weekly_payment';
+import AttendanceRaw from './tb_attendance_raw';
 
 
 interface IModelCollection {
@@ -27,6 +28,7 @@ const modelCollection = {
     AttendanceRecord : AttendanceRecord,
     Position: Position,
     Payroll: Payroll,
+    AttendanceRaw: AttendanceRaw,
     Sequelize: sequelize.Sequelize,
     sequelize: sequelize
 }

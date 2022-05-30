@@ -17,7 +17,7 @@ class EmployeeController extends BaseController {
         const validateRequest = await this.validateRequest(req);
         try {
 
-            const _data = await employeeServices.getTest(['position', 'position', 'employee.positions'])
+            const _data = await employeeServices.getTest(['position', 'employee.positions'])
             const data = await employeeServices.getCountEmployees();
             this.responseOption = {
                 ...this.responseOption, 

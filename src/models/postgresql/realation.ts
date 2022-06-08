@@ -10,7 +10,9 @@ export const loadRealation = (modelColl: ModelCollection) => {
     })
 
     modelColl.Employee.belongsTo( modelColl.Position, { 
-        foreignKey: 'positionId', targetKey: 'id', as: 'position' 
+        foreignKey: 'positionId',
+        targetKey: 'id',
+        as: 'position'
     });
 
     modelColl.Division.hasMany( modelColl.Position, {
@@ -20,7 +22,9 @@ export const loadRealation = (modelColl: ModelCollection) => {
     })
 
     modelColl.Position.belongsTo( modelColl.Division, { 
-        foreignKey: 'divisionId', targetKey: 'id', as: 'division' 
+        foreignKey: 'divisionId', 
+        targetKey: 'id', 
+        as: 'division' 
     });
 
     modelColl.Employee.hasMany( modelColl.Attendance, {

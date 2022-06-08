@@ -354,7 +354,7 @@ class Controller extends BaseController {
 
             for await (const timeAttend of attendance.listTimeAttend){
 
-                console.log(timeAttend)
+                console.log(attendance)
             }
 
             

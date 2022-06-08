@@ -24,7 +24,7 @@ class EmployeeController extends BaseController {
             const filter = {
                 search: search
             }
-            const includes = ['position', 'position.division']
+            const includes = ['position']
 
             const data = await service.getEmployees({filter, includes});
             this.responseOption = {
@@ -34,7 +34,7 @@ class EmployeeController extends BaseController {
                 message: "Success!"
             }
 
-            
+        
         } catch (err: any) {
             console.log(err);
             this.responseOption = {

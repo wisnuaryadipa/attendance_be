@@ -10,6 +10,10 @@ class AttendanceRecord {
         return await model.AttendanceRecord.create(attendance);
     }
 
+    getAll = async () => {
+        return await model.AttendanceRecord.findAll();
+    }
+
 }
 
 export default new AttendanceRecord();

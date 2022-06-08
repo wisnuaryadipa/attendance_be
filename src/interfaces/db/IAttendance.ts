@@ -14,6 +14,8 @@ export interface IBaseAttendance {
     updatedAt: Date;
     workDuration?: Nullable<number>;
     status?: number;
+    isLate?: boolean;
+    isBackToEarly?: boolean;
 }
 
 export interface IAttendance extends IBaseAttendance {

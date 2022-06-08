@@ -69,12 +69,12 @@ class importEditEmployees extends BaseController {
             if (_employee) {
                 const gender = employee.gender == "L" ? 1 : 2;
                 _employee.gender = gender;
+                _employee.positionId = employee.pos;
                 if (employee.hire_date) {
                     _employee.hireDate = moment.unix((employee.hire_date-25569)*86400).format('DD-MM-YYYY');
                 }
                 await _employee.save();
             }
-
         }
     }
     

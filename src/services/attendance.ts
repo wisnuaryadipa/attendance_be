@@ -5,6 +5,7 @@ import {IBaseAttendance, IAttendance} from '@src/interfaces/db/IAttendance';
 import Employee from '@src/models/postgresql/tm_employee';
 import moment from 'moment';
 import { Op } from 'sequelize';
+import { addZero } from 'src/helper/AddZero';
 
 const Sequelize = model.Sequelize;
 const includeObj = [{model: Employee, as: "employee"}];
@@ -58,6 +59,25 @@ class AttendanceService {
             
 
         });
+    }
+
+    getAttendanceByIdByDate = async (employeeId: number, date: Date) => {
+        const _date = addZero(date.getDate(), 2).toString();
+        const _month = addZero(date.getMonth()+1, 2).toString();
+        const _year = addZero(date.getFullYear(), 4).toString();
+
+        return await model.Attendance.findOne({
+            where: {
+                [Op.and]: [
+                    {employeeId: employeeId},
+                    Sequelize.where( Sequelize.fn("substring", Sequelize.col("date"), 7, 4), {[Op.eq]: _year}),
+                    Sequelize.where( Sequelize.fn("substring", Sequelize.col("date"), 4, 2), {[Op.eq]: _month}),
+                    Sequelize.where( Sequelize.fn("substring", Sequelize.col("date"), 1, 2), {[Op.eq]: _date}),
+
+                ]
+                
+            }
+        })
     }
 }
 

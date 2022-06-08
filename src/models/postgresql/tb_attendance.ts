@@ -55,6 +55,16 @@ const Attendance = sequelize.define<AttendanceInstance>('tb_attendance', {
       allowNull: true,
       field: 'work_duration'
     },
+    isLate: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      field: 'is_late'
+    },
+    isBackToEarly: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      field: 'is_back_to_early'
+    },
   }, {
     schema: 'attendance',
     // Another option

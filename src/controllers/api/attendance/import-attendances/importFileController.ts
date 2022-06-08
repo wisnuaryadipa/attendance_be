@@ -9,7 +9,7 @@ import services from "src/services";
 import { IBaseAttendanceRecord } from 'src/interfaces/db/IAttendanceRecord';
 
 
-class ImportAttendances extends BaseController {
+class ImportFile extends BaseController {
 
     constructor(){ 
         super();
@@ -132,4 +132,4 @@ class ImportAttendances extends BaseController {
 
 }
 
-export default new ImportAttendances();
+export default new ImportFile();

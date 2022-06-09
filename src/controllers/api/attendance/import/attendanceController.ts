@@ -47,7 +47,7 @@ class Controller extends BaseController {
             } else {
                 let attendanceJson = this.parseExcelToJson(req.file);
                 let attendJson = this.initiateAttendJson(attendanceJson);
-                attendJson = this.addWorkDurationPropertiy(attendJson);
+                // attendJson = this.addWorkDurationPropertiy(attendJson);
                 await this.storeToDBNew(attendJson)
 
                 option.status = 200;
@@ -352,9 +352,10 @@ class Controller extends BaseController {
             .subtract('1', 'days')
             .format('DD/MM/YYYY');
 
+            console.log(_attendance)
             for await (const timeAttend of attendance.listTimeAttend){
 
-                console.log(attendance)
+                // console.log(timeAttend)
             }
 
             

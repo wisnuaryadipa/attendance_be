@@ -80,11 +80,20 @@ class Controller extends BaseController {
         })
 
         attendancesJson.map((attendanced:any, index) => {
+
             let removedDuplicAttend:[] = [];
+
+            /** Remove duplicate recorded attendance time */
             removedDuplicAttend = this.removeDuplicateAttendant(attendanced);
 
-            return removedDuplicAttend;
+            attendanced['listTimeAttend'] = removedDuplicAttend
+
+            /** Make array times properties */
+
+            return attendanced;
         });
+
+        console.log(attendancesJson);
 
         return attendancesJson;
     }
@@ -128,7 +137,7 @@ class Controller extends BaseController {
             .subtract('1', 'days')
             .format('DD/MM/YYYY');
 
-            console.log(_attendance)
+            // console.log(_attendance)
             // for await (const timeAttend of attendance.listTimeAttend){
 
             //     // console.log(timeAttend)

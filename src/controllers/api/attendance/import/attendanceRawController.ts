@@ -15,7 +15,6 @@ class Controller extends BaseController {
         // Output : Attendance with datatype IBaseAttendance
     
         let _attendance: IBaseAttendanceRaw = {
-            attendanceStatus: attendance,
             attendanceTime: attendance.Time ? attendance.Time : null,
             date: attendance.Date,
             employeeId: attendance['AC-No'],
@@ -131,20 +130,22 @@ class Controller extends BaseController {
 
         for await (const attendance of attendances) {
             number = number + 1;
-            let _attendance = this.pushToType(attendance);
 
             const prevDate: string = moment(attendance.Date, 'DD/MM/YYYY')
             .subtract('1', 'days')
             .format('DD/MM/YYYY');
 
-            // console.log(_attendance)
-            // for await (const timeAttend of attendance.listTimeAttend){
+            for await (const timeAttend of attendance.listTimeAttend){
 
-            //     // console.log(timeAttend)
-            // }
+                attendance.Time = timeAttend;
+                let _attendance = this.pushToType(attendance);
+
+                console.log(_attendance)
+            }
 
             
         }
+
         return number;
     }
 

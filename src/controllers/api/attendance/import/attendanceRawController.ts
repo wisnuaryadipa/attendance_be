@@ -5,6 +5,7 @@ import { IBaseAttendanceRaw } from "src/interfaces/db/IAttendanceRaw";
 import { IOptions } from "src/interfaces/IResponse";
 import xlsx from 'xlsx';
 import { x } from "joi";
+import services from "src/services";
 
 
 
@@ -15,6 +16,7 @@ class Controller extends BaseController {
         // Output : Attendance with datatype IBaseAttendance
     
         let _attendance: IBaseAttendanceRaw = {
+            attendanceStatus: 1,
             attendanceTime: attendance.Time ? attendance.Time : null,
             date: attendance.Date,
             employeeId: attendance['AC-No'],
@@ -139,8 +141,8 @@ class Controller extends BaseController {
 
                 attendance.Time = timeAttend;
                 let _attendance = this.pushToType(attendance);
-
-                console.log(_attendance)
+                let _result = await services.attendanceRaw.addAttendance(_attendance);
+                console.log(_result)
             }
 
             

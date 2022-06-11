@@ -24,7 +24,7 @@ const AttendanceRaw = sequelize.define<AttendanceRawInstance>('tb_attendance_raw
     attendanceStatus: {
       type: DataTypes.NUMBER,
       allowNull: true,
-      field: 'attendance_status'
+      field: 'attend_status'
     },
     date: {
       type: DataTypes.STRING,

@@ -6,6 +6,7 @@ import { IOptions } from "src/interfaces/IResponse";
 import xlsx from 'xlsx';
 import { x } from "joi";
 import services from "src/services";
+import { result } from "lodash";
 
 
 
@@ -99,9 +100,7 @@ class Controller extends BaseController {
         return attendancesJson;
     }
 
-    removeEmptyAttendant = (attendances: any) => {
-
-    }
+    
 
     removeDuplicateAttendant = (attendanced:any) => {
         let arrFilteredTimeAttends: [moment.Moment]|[] = [];
@@ -127,6 +126,16 @@ class Controller extends BaseController {
         return arrFilteredTimeAttends;
     }
 
+    checkIsAlreadyOnDb = async (attendance: IBaseAttendanceRaw) => {
+
+        let result = await services.attendanceRaw.getAttendanceByEmployeeIdDateTime(
+            attendance.employeeId, 
+            attendance.date, 
+            attendance.attendanceTime)
+
+        return result;
+    }
+
     storeToDBNew = async (attendances: any) => {
         let number = 0;
 
@@ -141,8 +150,17 @@ class Controller extends BaseController {
 
                 attendance.Time = timeAttend;
                 let _attendance = this.pushToType(attendance);
-                let _result = await services.attendanceRaw.addAttendance(_attendance);
-                console.log(_result)
+                if (await this.checkIsAlreadyOnDb(_attendance).then(token => token == null )) {
+                    /** Checking condition if attendance data has stored on db
+                     * if 'YES' dont store new duplicates data,
+                     * if 'NO' store new data to DB
+                     */
+                    console.log( "Absensi Already on DB" );
+                } else {
+                    console.log("add")
+                    let _result = await services.attendanceRaw.addAttendance(_attendance);
+                    // console.log(_result)
+                }
             }
 
             

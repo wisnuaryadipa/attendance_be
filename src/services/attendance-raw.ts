@@ -59,6 +59,10 @@ class AttendanceService {
 
         });
     }
+    
+    getAttendanceByEmployeeIdDateTime = async (employeeId: string, time: string, date: string) => {
+        return await model.AttendanceRaw.findOne({ where: {employeeId: employeeId, date: date, time: time}})
+    }
 }
 
 export default new AttendanceService();

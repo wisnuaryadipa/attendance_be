@@ -4,7 +4,7 @@ import { Nullable } from "@src/types/common";
 export interface IBaseAttendanceRaw {
 
     employeeId: string;
-    attendanceTime?: string;
+    attendanceTime: string;
     visible: number;
     attendanceStatus?: number;
     date: string;

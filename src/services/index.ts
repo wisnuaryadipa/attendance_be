@@ -17,5 +17,5 @@ export default {
     payroll: payrollServices,
     salaryEmployee: salaryEmployeeServices,
     weeklyPayment: weeklyPaymentServices,
-    attendanceRaw: attendanceRaw
+    attendanceRaw: attendanceRaw,
 }

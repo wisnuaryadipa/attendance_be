@@ -84,11 +84,12 @@ class Controller extends BaseController {
         attendancesJson.map((attendanced:any, index) => {
 
             let removedDuplicAttend:[] = [];
+            
 
             /** Remove duplicate recorded attendance time */
             removedDuplicAttend = this.removeDuplicateAttendant(attendanced);
-
-            attendanced['listTimeAttend'] = removedDuplicAttend
+            attendanced['listTimeAttend'] = removedDuplicAttend;
+            
 
             /** Make array times properties */
 
@@ -162,11 +163,13 @@ class Controller extends BaseController {
                     // console.log(_result)
                 }
             }
-
-            
         }
 
         return number;
+    }
+
+    identifyStatusChecking = async (time: string) => {
+
     }
 
 

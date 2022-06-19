@@ -1,6 +1,7 @@
 import { IBaseAttendanceRecord } from "src/interfaces/db/IAttendanceRecord";
 import model from '@src/models/postgresql';
-import {FindOptions} from 'sequelize';
+import {FindOptions, Op} from 'sequelize';
+import moment from "moment";
 
 const option: FindOptions = {
     limit: 10,
@@ -21,7 +22,11 @@ class AttendanceRecord {
     getAllByEmployee = async (employeeId: string, dateStart: string, dateEnd: string, _option: FindOptions) => {
         return await model.AttendanceRecord.findAll({...option, ..._option, 
             where: {
-                employeeId: employeeId
+                employeeId: employeeId,
+                recordTime: {
+                    [Op.gte]: moment(dateStart).startOf('days').toDate(),
+                    [Op.lte]: moment(dateEnd).endOf('days').toDate()
+                }
             }
         })
     }
@@ -31,7 +36,10 @@ class AttendanceRecord {
             ...option, 
             ..._option,
             where: {
-                
+                recordTime: {
+                    [Op.gte]: moment(dateStart).startOf('days').toDate(),
+                    [Op.lte]: moment(dateEnd).endOf('days').toDate()
+                }
             }
 
         })

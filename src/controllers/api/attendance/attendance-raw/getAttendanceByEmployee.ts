@@ -33,30 +33,44 @@ class Controller extends BaseController {
 
     requestHandler = async (req: Request, res: Response) => {
 
-        let _reqVal = await this.validateRequest(req);
-        let {params, query, headers} = _reqVal;
-        let option: FindOptions = {};
 
-        let _req: IRequests = {
-            dateEnd: query.dateEnd!.toString(),
-            dateStart: query.dateStart!.toString(),
-            employeeId: params.employeeId,
-            limit: (query.limit) ? parseInt(query.limit.toString()) : 10,
-            page: (query.page) ? parseInt(query.page.toString()) : 1
-        }
+        try {
 
-        option = {
-            limit: _req.limit,
-            offset: _req.page
-        }
+            let _reqVal = await this.validateRequest(req);
+            let {params, query, headers} = _reqVal;
+            let option: FindOptions = {};
+    
+            let _req: IRequests = {
+                dateEnd: query.dateEnd ? query.dateEnd.toString() : moment().toString(),
+                dateStart: query.dateStart ? query.dateStart!.toString() : moment().startOf("week").toString(),
+                employeeId: params.employeeId,
+                limit: (query.limit) ? parseInt(query.limit.toString()) : 10,
+                page: (query.page) ? parseInt(query.page.toString()) : 1
+            }
+    
+            option = {
+                limit: _req.limit,
+                offset: _req.page
+            }
+    
+            let _result = await services.attendanceRecord.getAllByEmployee(_req.employeeId, _req.dateStart, _req.dateEnd, option);
+    
+            this.responseOption = {
+                ...this.responseOption, 
+                data: _result, 
+                status: 201,
+                message: "Success!"
+            }
+            
+        } catch(err: any) {
 
-        let _result = await services.attendanceRecord.getAllByEmployee(_req.employeeId, _req.dateStart, _req.dateEnd, option);
+            console.log(err);
+            this.responseOption = {
+                ...this.responseOption, 
+                message:err,
+                status: 500
+            }
 
-        this.responseOption = {
-            ...this.responseOption, 
-            data: _result, 
-            status: 201,
-            message: "Success!"
         }
         
         this.sendResponse(req, res, this.responseOption);

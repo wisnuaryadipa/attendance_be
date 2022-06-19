@@ -17,5 +17,7 @@ attendance.post('/importraw/file', multer().single('file'), (req, res, next) => 
     next();
 }, controllers.apiControllers.attendanceControllers.attendanceRaw.requestHandler);
 
+attendance.get('/user/:employeeId/all', controllers.apiControllers.attendanceControllers.attendanceRecord.getAttendanceByEmployee.requestHandler);
+
 
 export default attendance

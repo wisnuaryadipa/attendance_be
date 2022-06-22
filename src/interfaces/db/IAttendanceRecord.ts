@@ -5,7 +5,7 @@ export interface IBaseAttendanceRecord {
 
     employeeId: number;
     machineId?: number;
-    status: number;
+    status: string;
     recordTime: string;
     createdAt?: Date;
     updatedAt?: Date;

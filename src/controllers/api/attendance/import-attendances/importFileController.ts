@@ -1,11 +1,13 @@
 
 import {BaseController, IRequestValidationSchemaJOI} from '@src/controllers/api/baseController';
 import { Request, Response } from 'express';
+import { IBaseAttendanceRaw } from "src/interfaces/db/IAttendanceRaw";
 import {IOptions} from "@src/interfaces/IResponse"
 import Joi from 'joi';
 import xlsx from 'xlsx';
 import moment from 'moment';
 import services from "src/services";
+import _ from 'lodash';
 import { IBaseAttendanceRecord } from 'src/interfaces/db/IAttendanceRecord';
 
 
@@ -37,7 +39,7 @@ class ImportFile extends BaseController {
                 jsonAttendances = this.parseExcelToJson(file);
                 
                 data = this.initiateAttendJson(jsonAttendances)
-                data = await this.insertToDB(data)
+                data = await this.insertAttendancesToDB(data)
             } else {
                 // Check if file is empty
                 this.responseOption = {
@@ -64,14 +66,42 @@ class ImportFile extends BaseController {
         this.sendResponse(req, res, this.responseOption)
     }
 
-    initiateAttendJson = (jsonAttendances: []) => {
+    initiateAttendJson = async (jsonAttendances: []) => {
+        /*
+            Desc :  This function is doing the whole process on importing file excel from finger print attendance machine
+                    First process   :   Removing duplicates employee's recorded attendance (array form) on every single day
+                    Second process  :   Reform jsonAttendance object from request method (all variable passed from browser)
+                                        into IBaseAttendanceRecord that fit into database table.
+        */
         jsonAttendances.map((attendanced: any, index) => {
+            // Removeing duplicate employee's record attendance in a day
             let removedDuplicAttend = this.removeDuplicateAttendant(attendanced);
             attendanced.Time = removedDuplicAttend
             return attendanced;
         })
 
-        return jsonAttendances;
+        let attendanceRecords = await this.splitArrTime(jsonAttendances);
+
+        // await Promise.all(
+        //     attendanceRecords.map(async (att, key) => {
+        //         const _localLastTIme = _.filter(attendanceRecords, (_att) => {
+        //             const isSameEmployeeId = att.machineId == _att.employeeId;
+        //             const isBefore = moment(att.recordTime).isAfter(_att.recordTime)
+        //             return isSameEmployeeId && isBefore;
+        //         })
+
+        //         const sortFiltered = _.orderBy(_localLastTIme, ['recordTime'], 'desc')[0]
+
+        //         if (sortFiltered) {
+        //             console.log
+        //         } else {
+        //             console.log('not found before')
+        //         }
+        //         return _
+        //     })
+        // )
+
+        return attendanceRecords;
     }
 
     
@@ -106,28 +136,95 @@ class ImportFile extends BaseController {
         return arrFilteredTimeAttends;
     }
 
-    insertToDB = async (attendances) => {
+    findEmployeeByMachineId = async (machineId: number) => {
+        return await services.employee.getEmployeeByMachineId(machineId);
+    }
+
+    identifyStatusChecking = async (timeAttend: string, prefAttend: string) => {
+        /* 
+            Desc : Identify status check employee attendance (CHECK IN or CHECK OUT)
+            Input : 
+
+        */
+
+        // const _time = moment(timeAttend, "HH.mm");
+        // const _prefAttend = moment(prefAttend, "HH:mm");
+        // let attendSession = {} as ISessionAttend;
+        // attendSession.hour = parseInt(_time.format("HH"));
+        // attendSession.minute = parseInt(_time.format("mm"));
+        
+        // if (_time >= moment("05:00", "HH:mm") && _time <= moment("12:00", "HH:mm")){
+        //     // Attend status is CHECKIN
+        //     attendSession.sessionNumber = 1;
+        //     attendSession.statusAttend = "CHECKIN";
+
+        // } else if (_time >= moment("14:00", "HH:mm") && _time <= moment("21:59", "HH:mm")) {
+        //     if (_prefAttend >= moment("05:00", "HH:mm") && _prefAttend <= moment("12:00", "HH:mm")) {
+        //         // Attend status is CHECKOUT
+        //         attendSession.sessionNumber = 2;
+        //         attendSession.statusAttend = "CHECKOUT";
+        //     } else {
+        //         // Attend status is CHECKIN
+        //         attendSession.sessionNumber = 2;
+        //         attendSession.statusAttend = "CHECKIN";
+        //     }
+        // } else if (_time >= moment("21:00", "HH:mm") || _time <= moment("04:59", "HH:mm")) {
+        //     // Attend status is CHECKOUT
+        //     attendSession.sessionNumber = 3;
+        //     attendSession.statusAttend = "CHECKOUT";
+        // } else {
+        //     attendSession.sessionNumber = 99;
+        //     attendSession.statusAttend = "ABNORMAL";
+        // }
+        // return attendSession;
+    }
+
+    splitArrTime = async (attendance: any) => {
+        /* 
+            Desc : Spliting attendance object based on array of time (total emoloyee's attendances record of the day)
+        */
+        let _attendances: IBaseAttendanceRecord[] = [];
+        const _employee = await this.findEmployeeByMachineId(attendance['AC-No'])
+
+        if (_employee) {
+            for await (const time of attendance['Time']) {
+                const _attendance: IBaseAttendanceRecord = {
+                    employeeId: _employee.id,
+                    recordTime: moment(`${attendance['Date']} ${time}`, "DD/MM/YYYY HH:mm").format("YYYY-MM-DD HH:mm"),
+                    status: "EMPTY",
+                    machineId: 1,
+                }
+                _attendances.concat(_attendance);
+            }
+        }
+        return _attendances;
+    }
+    
+
+    insertAttendancesToDB = async (attendances: IBaseAttendanceRecord[]) => {
+        /*
+            Desc : Insert attendances object into Database
+        */
         let _addedCount = 0;
         let _allCount = 0;
-        for await (const attendance of attendances) {
-            const employee = await services.employee.getEmployeeByMachineId(attendance['AC-No']);
-            
-            if (employee){
-                for await (const time of attendance['Time']) {
-                    const _attendance: IBaseAttendanceRecord = {
-                        employeeId: employee.id,
-                        recordTime: moment(`${attendance['Date']} ${time}`, "DD/MM/YYYY HH:mm").format("YYYY-MM-DD HH:mm"),
-                        status: 1,
-                        machineId: 1,
-                    }
+        try {
 
-                    const _addRes = await services.attendanceRecord.add(_attendance)
-                    if (_addRes) { _addedCount++ }
-                }
+            for await (const attendance of attendances) {
+                await services.attendanceRecord.add(attendance)
             }
-            _allCount++;
+            return `${_addedCount}/${_allCount}`;
+
+        } catch (e) {
+            return e
         }
-        return `${_addedCount}/${_allCount}`;
+    }
+    
+    insertAttendanceToDB = async (attendance: IBaseAttendanceRecord) => {
+        try {
+            await services.attendanceRecord.add(attendance)
+        } catch (e) {
+            return e
+        }
     }
 
 }

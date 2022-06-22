@@ -101,6 +101,30 @@ class Controller extends BaseController {
         return attendancesJson;
     }
 
+    reformatAttendance = async (attendances: any) => {
+
+        let _attendances: IBaseAttendanceRaw[] = []; 
+        let number = 0;
+        for await (const attendance of attendances) {
+            number = number + 1;
+            _attendances.concat(this.splitArrTime(attendance));
+        }
+
+        return _attendances;
+    }
+
+    splitArrTime = (attendance: any) => {
+
+        let _attendances: IBaseAttendanceRaw[] = [];
+        let _attendance: IBaseAttendanceRaw;
+        for (const timeAttend of attendance.listTimeAttend){
+            attendance.Time = timeAttend;
+            _attendance = this.pushToType(attendance);
+            _attendances.push(_attendance);
+        }
+        
+        return _attendances;
+    }
     
 
     removeDuplicateAttendant = (attendanced:any) => {
@@ -128,43 +152,27 @@ class Controller extends BaseController {
     }
 
     checkIsAlreadyOnDb = async (attendance: IBaseAttendanceRaw) => {
-
-        let result = await services.attendanceRaw.getAttendanceByEmployeeIdDateTime(
+        return await services.attendanceRaw.getAttendanceByEmployeeIdDateTime(
             attendance.employeeId, 
             attendance.date, 
             attendance.attendanceTime)
-
-        return result;
     }
 
-    storeToDBNew = async (attendances: any) => {
+    storeToDBNew = async (attendances: IBaseAttendanceRaw[]) => {
         let number = 0;
 
         for await (const attendance of attendances) {
             number = number + 1;
-
-            const prevDate: string = moment(attendance.Date, 'DD/MM/YYYY')
-            .subtract('1', 'days')
-            .format('DD/MM/YYYY');
-
-            for await (const timeAttend of attendance.listTimeAttend){
-
-                attendance.Time = timeAttend;
-                let _attendance = this.pushToType(attendance);
-                if (await this.checkIsAlreadyOnDb(_attendance).then(token => token == null )) {
-                    /** Checking condition if attendance data has stored on db
-                     * if 'YES' dont store new duplicates data,
-                     * if 'NO' store new data to DB
-                     */
-                    console.log( "Absensi Already on DB" );
-                } else {
-                    console.log("add")
-                    let _result = await services.attendanceRaw.addAttendance(_attendance);
-                    // console.log(_result)
-                }
+            if (await this.checkIsAlreadyOnDb(attendance).then(token => token == null )) {
+                /** Checking condition if attendance data has stored on db
+                 * if 'YES' dont store new duplicates data,
+                 * if 'NO' store new data to DB
+                 */
+                console.log( "Absensi Already on DB" );
+            } else {
+                let _result = await services.attendanceRaw.addAttendance(attendance);
             }
         }
-
         return number;
     }
 

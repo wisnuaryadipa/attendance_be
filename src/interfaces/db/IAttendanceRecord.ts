@@ -11,7 +11,7 @@ export interface IBaseAttendanceRecord {
     updatedAt?: Date;
 }
 
-export interface IAttendance extends IBaseAttendanceRecord {
+export interface IAttendanceRecord extends IBaseAttendanceRecord {
     id: number;
     readonly employee?: IEmployee;
 }

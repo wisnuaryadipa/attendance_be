@@ -352,7 +352,7 @@ class Controller extends BaseController {
             .subtract('1', 'days')
             .format('DD/MM/YYYY');
 
-            console.log(_attendance)
+            // console.log(_attendance)
             for await (const timeAttend of attendance.listTimeAttend){
 
                 // console.log(timeAttend)

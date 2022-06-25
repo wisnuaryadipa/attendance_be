@@ -1,11 +1,11 @@
-import { IBaseAttendanceRecord } from './../../interfaces/db/IAttendanceRecord';
+import { IBaseAttendanceRecord, IAttendanceRecord } from './../../interfaces/db/IAttendanceRecord';
 import { IAttendance, IBaseAttendance } from '@src/interfaces/db/IAttendance';
 import {DataTypes, Sequelize, Model} from 'sequelize';
 import { Nullable } from '@src/types/common';
 import sequelize from '@src/loaders/sequelize';
 import Position from './tm_position';
 
-export interface AttendanceRecordInstance extends Model, IBaseAttendanceRecord {}
+export interface AttendanceRecordInstance extends Model, IAttendanceRecord {}
 
 const Attendance = sequelize.define<AttendanceRecordInstance>('tb_attendance_record', {
     employeeId: {

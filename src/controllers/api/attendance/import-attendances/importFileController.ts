@@ -120,7 +120,6 @@ class ImportFile extends BaseController {
             const currCheck = attendance.recordTime;
             attendance.status = prevCheck ? this.identifyStatusChecking(currCheck, prevCheck.recordTime) : "CHECKIN";
             attendance.save();
-            console.log(attendance)
             return attendance;
         })
 

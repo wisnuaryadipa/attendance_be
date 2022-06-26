@@ -3,7 +3,10 @@ import Joi from 'joi';
 import sendResponse from '@src/utilities/sendResponse';
 import errorCode from '@src/errors/flags';
 import ApplicationError from '@src/errors/application-error'
-import {IOptions} from '@src/interfaces/IResponse'
+import {IOptions} from '@src/interfaces/IResponse';
+import { IFilterOption } from 'src/interfaces/IFilterOption';
+import moment from 'moment';
+
 
 
 export interface IRequestValidationSchemaJOI {
@@ -12,7 +15,6 @@ export interface IRequestValidationSchemaJOI {
     params?: Joi.Schema;
     query?: Joi.Schema;
 }
-
 export class BaseController {
 
     constructor() {
@@ -33,6 +35,14 @@ export class BaseController {
       status: 500, 
       message: "Error !, something wrong in your input parameter or problem on server. "
     };
+
+    protected filterOpt: IFilterOption = {
+      offsetPage: 1,
+      limit: 10,
+      dateStart: moment().subtract('3', 'years').startOf('days').toDate(),
+      dateEnd: moment().endOf('days').toDate(),
+
+    }
     
     protected validateRequest = async (req: Request) => {
         let { body, headers, params, query} = req;

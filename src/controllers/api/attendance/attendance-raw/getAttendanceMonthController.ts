@@ -34,7 +34,6 @@ class Controller extends BaseController {
 
         let _reqVal = await this.validateRequest(req);
         let {params, query, headers} = _reqVal;
-        let option: FindOptions = {};
 
         let _req: IRequests = {
             dateEnd: query.dateEnd ? query.dateEnd.toString() : moment().toString(),
@@ -43,12 +42,12 @@ class Controller extends BaseController {
             page: (query.page) ? parseInt(query.page.toString()) : 1
         }
 
-        option = {
+        this.filterOpt = {
             limit: _req.limit,
-            offset: _req.page
+            offsetPage: _req.page
         }
 
-        let _result = await services.attendanceRecord.getAllByDate(_req.dateStart, _req.dateEnd, option);
+        let _result = await services.attendanceRecord.getAllByDate(_req.dateStart, _req.dateEnd, this.filterOpt);
 
         this.responseOption = {
             ...this.responseOption, 

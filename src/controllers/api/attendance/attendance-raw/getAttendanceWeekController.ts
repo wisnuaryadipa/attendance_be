@@ -47,7 +47,7 @@ class Controller extends BaseController {
             offsetPage: _req.page
         }
 
-        let _result = await services.attendanceRecord.getAllByDate(_req.dateStart, _req.dateEnd, option);
+        let _result = await services.attendanceRecord.getAllByDate(_req.dateStart, _req.dateEnd, this.filterOpt);
 
         this.responseOption = {
             ...this.responseOption, 

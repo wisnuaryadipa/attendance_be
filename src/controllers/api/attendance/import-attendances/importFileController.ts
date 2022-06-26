@@ -176,13 +176,15 @@ class ImportFile extends BaseController {
         const _prevCheck = moment(prevCheck, "HH:mm");
         let status = "";
         
-        if (_time >= moment("05:00", "HH:mm") && _time <= moment("12:00", "HH:mm")){
+        if (_time.isSameOrAfter(_time.set({hour: 5, minute: 0})) && _time.isBefore(_time.set({hour: 12, minute: 0})) ){
             // Attend status is CHECKIN
             // attendSession.sessionNumber = 1;
+
+            
             status = "CHECKIN";
 
-        } else if (_time >= moment("14:00", "HH:mm") && _time <= moment("21:59", "HH:mm")) {
-            if (_prevCheck >= moment("05:00", "HH:mm") && _prevCheck <= moment("12:00", "HH:mm")) {
+        } else if (_time >= _time.set({hour: 14, minute: 0}) && _time <= _time.set({hour: 21, minute: 59})) {
+            if (_prevCheck >= _time.set({hour: 5, minute: 0}) && _prevCheck <= _time.set({hour: 12, minute: 0})) {
                 // Attend status is CHECKOUT
                 // attendSession.sessionNumber = 2;
                 status = "CHECKOUT";
@@ -191,10 +193,6 @@ class ImportFile extends BaseController {
                 // attendSession.sessionNumber = 2;
                 status = "CHECKIN";
             }
-        } else if (_time >= moment("21:00", "HH:mm") || _time <= moment("04:59", "HH:mm")) {
-            // Attend status is CHECKOUT
-            // attendSession.sessionNumber = 3;
-            status = "CHECKOUT";
         } else {
             // attendSession.sessionNumber = 99;
             status = "ABNORMAL";

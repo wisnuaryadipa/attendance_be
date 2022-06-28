@@ -25,7 +25,7 @@ const Attendance = sequelize.define<AttendanceRecordInstance>('tb_attendance_rec
     recordTime: {
       type: DataTypes.DATE,
       allowNull: true,
-      field: 'record_time'
+      field: 'record_time',
     },
     createdAt: {
         type: DataTypes.DATE,

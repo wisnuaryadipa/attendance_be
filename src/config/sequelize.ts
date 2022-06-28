@@ -1,3 +1,4 @@
+import { Sequelize } from 'sequelize/types';
 import config from '../config'
 import {IDBEnv, IDBType} from '../interfaces/IConfigs'
 
@@ -12,17 +13,20 @@ const sequelize : any = {
     "schema": dbConfig.postgres?.schema || "",
     "dialect": "postgres",
     "logging": true,
-    "timezone": "+07:00",
     "operatorsAliases": false,
     "define": {
-        "freezeTableName": true
+        "freezeTableName": true,
     },
     "pool": {
       "max": 10,
       "min": 0,
       "acquire": 20000,
       "idle": 20000
-    }
+    },
+    "timezone": "+07:00",
+    dialectOptions: {
+      useUTC: false, // for reading from database
+    },
 }
 
 export default sequelize;

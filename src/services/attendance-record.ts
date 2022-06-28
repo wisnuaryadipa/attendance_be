@@ -23,15 +23,19 @@ class AttendanceRecord {
         return await model.AttendanceRecord.findAll({ ...optionPagination });
     }
 
-    getAllByEmployee = async (employeeId: string, dateStart: string, dateEnd: string, _option: FindOptions) => {
-        return await model.AttendanceRecord.findAll({ ...optionPagination, ..._option, 
+    getAllByEmployee = async (employeeId: string, dateStart: string, dateEnd: string, _option?: FindOptions) => {
+        console.log(moment(dateStart, 'DD-MM-YYYY').startOf('days').format('YYYY-MM-DD HH:mm'))
+        return await model.AttendanceRecord.findAll({  ..._option, 
             where: {
                 employeeId: employeeId,
                 recordTime: {
-                    [Op.gte]: moment(dateStart).startOf('days').toDate(),
-                    [Op.lte]: moment(dateEnd).endOf('days').toDate()
+                    [Op.gt]: moment(dateStart, 'DD-MM-YYYY').startOf('days').subtract(1,'day').format('YYYY-MM-DD HH:mm'),
+                    [Op.lte]: moment(dateEnd, 'DD-MM-YYYY').endOf('days').format('YYYY-MM-DD HH:mm')
                 }
-            }
+            },
+            order: [
+                ['recordTime', 'asc']
+            ]
         })
     }
     
@@ -41,8 +45,8 @@ class AttendanceRecord {
             ..._option,
             where: {
                 recordTime: {
-                    [Op.gte]: moment(dateStart).startOf('days').toDate(),
-                    [Op.lte]: moment(dateEnd).endOf('days').toDate()
+                    [Op.gte]: moment(dateStart, 'DD-MM-YYYY').startOf('days').format(),
+                    [Op.lte]: moment(dateEnd, 'DD-MM-YYYY').endOf('days').toDate()
                 }
             }
         });

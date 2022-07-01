@@ -24,9 +24,6 @@ const sequelize : any = {
       "idle": 20000
     },
     "timezone": "+07:00",
-    dialectOptions: {
-      useUTC: false, // for reading from database
-    },
 }
 
 export default sequelize;

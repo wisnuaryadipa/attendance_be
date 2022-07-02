@@ -182,8 +182,8 @@ class ImportFile extends BaseController {
             
             status = "CHECKIN";
 
-        } else if (_time >= _time.set({hour: 14, minute: 0}) && _time <= _time.set({hour: 21, minute: 59})) {
-            if (_prevCheck >= _time.set({hour: 5, minute: 0}) && _prevCheck <= _time.set({hour: 12, minute: 0})) {
+        } else if (_time.isSameOrAfter(_time.set({hour: 14, minute: 0}))  && _time.isSameOrBefore( _time.set({hour: 21, minute: 59}))) {
+            if (_prevCheck.isSameOrAfter(_time.set({hour: 5, minute: 0})) && _prevCheck.isSameOrBefore(_time.set({hour: 12, minute: 0})) ) {
                 // Attend status is CHECKOUT
                 // attendSession.sessionNumber = 2;
                 status = "CHECKOUT";

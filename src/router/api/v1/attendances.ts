@@ -17,6 +17,8 @@ attendance.post('/importraw/file', multer().single('file'), (req, res, next) => 
     next();
 }, controllers.apiControllers.attendanceControllers.importAttendance.requestHandler);
 
+attendance.get('/generate/status', controllers.apiControllers.attendanceControllers.attendance.regenerateStatusAttend.requestHandler);
+
 attendance.get('/user/:employeeId/all', controllers.apiControllers.attendanceControllers.attendanceRecord.getAttendanceByEmployee.requestHandler);
 attendance.get('/list/:employeeId', controllers.apiControllers.attendanceControllers.attendance.filterByEmployeeId.requestHandler);
 

@@ -1,8 +1,11 @@
+import { IFilterOption } from './../interfaces/IFilterOption';
 import { IBaseAttendanceRecord } from "src/interfaces/db/IAttendanceRecord";
 import model from '@src/models/postgresql';
-import {FindOptions, Op} from 'sequelize';
+import {Filterable, FindOptions, Op, WhereOptions} from 'sequelize';
 import moment from "moment";
 import { AttendanceRecordInstance } from "src/models/postgresql/tb_attendance_record";
+import { IFilterAttendanceRecord } from './../interfaces/IFilterOption';
+
 
 const optionPagination: FindOptions = {
     limit: 10,
@@ -23,8 +26,21 @@ class AttendanceRecord {
         return await model.AttendanceRecord.findAll({ ...optionPagination });
     }
 
+    getAttendances = async ( _options? :IFilterAttendanceRecord) => {
+        let _where: IFilterAttendanceRecord = {}
+
+        let where: WhereOptions<AttendanceRecordInstance> = {}
+        if (_where.employeeId) { where = {...where, employeeId: _options?.employeeId}}  
+
+        return await model.AttendanceRecord.findAll({ 
+            where: {...where},
+            order: [
+                ['recordTime', 'asc']
+            ]
+        })
+    }
+
     getAllByEmployee = async (employeeId: string, dateStart: string, dateEnd: string, _option?: FindOptions) => {
-        console.log(moment(dateStart, 'DD-MM-YYYY').startOf('days').format('YYYY-MM-DD HH:mm'))
         return await model.AttendanceRecord.findAll({  ..._option, 
             where: {
                 employeeId: employeeId,

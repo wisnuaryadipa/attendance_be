@@ -41,12 +41,13 @@ class GetEmployeeById extends BaseController {
             
             const _employeeId = params.employeeId;
             let {startDate, endDate} = query;
-            console.log(query)
 
             startDate = startDate ? startDate.toString() : moment().startOf('days').format('DD/MM/YYYY');
             endDate = endDate ? endDate.toString() : moment().endOf('day').format('DD/MM/YYYY');
             
             data = await services.attendanceRecord.getAllByEmployee(_employeeId, startDate, endDate);
+
+
             
             this.responseOption = {
                 ...this.responseOption, 

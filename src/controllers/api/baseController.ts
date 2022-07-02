@@ -39,8 +39,8 @@ export class BaseController {
     protected filterOpt: IFilterOption = {
       offsetPage: 1,
       limit: 10,
-      dateStart: moment().subtract('3', 'years').startOf('days').toDate(),
-      dateEnd: moment().endOf('days').toDate(),
+      dateStart: moment().subtract('3', 'years').startOf('days').toString(),
+      dateEnd: moment().endOf('days').toString(),
 
     }
     

@@ -29,9 +29,9 @@ class AttendanceRecord {
     getAttendances = async ( _options? :IFilterAttendanceRecord) => {
         let _where: IFilterAttendanceRecord = {..._options}
         let where: WhereOptions<AttendanceRecordInstance> = {}
+        
         if (_where.employeeId) { where = {...where, employeeId: _options?.employeeId}}  
 
-        console.log(where)
         return await model.AttendanceRecord.findAll({ 
            
             where: {

@@ -39,10 +39,8 @@ class regenerateStatusAttend extends BaseController {
             dateStart = dateStart ? dateStart.toString() : moment().startOf('days').format('DD/MM/YYYY');
             dateEnd = dateEnd ? dateEnd.toString() : moment().endOf('day').format('DD/MM/YYYY');
     
-            console.log(dateStart)
-            console.log( moment(dateStart, 'DD/MM/YYYY').startOf('days').format('YYYY-MM-DD HH:mm:ss'))
             let _attendances = await services.attendanceRecord.getAttendances({dateStart, dateEnd, employeeId: "3"});
-            // await this.identifyAndEditStatusAttendances(_attendances)
+            await this.identifyAndEditStatusAttendances(_attendances)
     
             this.responseOption = {
                 ...this.responseOption, 
@@ -70,7 +68,6 @@ class regenerateStatusAttend extends BaseController {
         for (const attendance of attendanceInstances) {
 
             const prevCheck = await services.attendanceRecord.getPrevRecordByRecordTime(attendance.employeeId, attendance.recordTime);
-            console.log(prevCheck)
             const currCheck = attendance.recordTime;
             attendance.status = prevCheck ? this.identifyStatusChecking(currCheck, prevCheck.recordTime) : "CHECKIN";
             attendance.save();
@@ -90,7 +87,6 @@ class regenerateStatusAttend extends BaseController {
         const _time = moment(currCheck, "HH.mm");
         const _prevCheck = moment(prevCheck, "HH:mm");
         let status = "";
-        
         if (_time.isSameOrAfter(_time.set({hour: 5, minute: 0})) && _time.isBefore(_time.set({hour: 12, minute: 0})) ){
             // Attend status is CHECKIN
             // attendSession.sessionNumber = 1;
@@ -112,6 +108,8 @@ class regenerateStatusAttend extends BaseController {
             // attendSession.sessionNumber = 99;
             status = "ABNORMAL";
         }
+        
+        console.log(status)
         return status;
     }
 }

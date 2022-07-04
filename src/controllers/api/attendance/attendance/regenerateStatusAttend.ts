@@ -39,7 +39,7 @@ class regenerateStatusAttend extends BaseController {
             dateStart = dateStart ? dateStart.toString() : moment().startOf('days').format('DD/MM/YYYY');
             dateEnd = dateEnd ? dateEnd.toString() : moment().endOf('day').format('DD/MM/YYYY');
     
-            let _attendances = await services.attendanceRecord.getAttendances({dateStart, dateEnd, employeeId: "3"});
+            let _attendances = await services.attendanceRecord.getAttendances({dateStart, dateEnd});
             await this.identifyAndEditStatusAttendances(_attendances)
     
             this.responseOption = {
@@ -69,7 +69,9 @@ class regenerateStatusAttend extends BaseController {
 
             const prevCheck = await services.attendanceRecord.getPrevRecordByRecordTime(attendance.employeeId, attendance.recordTime);
             const currCheck = attendance.recordTime;
-            attendance.status = prevCheck ? this.identifyStatusChecking(currCheck, prevCheck.recordTime) : "CHECKIN";
+            attendance.status = prevCheck 
+            ? this.identifyStatusChecking(currCheck, prevCheck.recordTime) 
+            : this.identifyStatusChecking(currCheck);
             attendance.save();
         }
 
@@ -77,7 +79,7 @@ class regenerateStatusAttend extends BaseController {
 
     }
 
-    identifyStatusChecking = (currCheck: string, prevCheck: string) => {
+    identifyStatusChecking = (currCheck: string, prevCheck?: string) => {
         /* 
             Desc : Identify status check employee attendance (CHECK IN or CHECK OUT)
             Input : 
@@ -85,26 +87,41 @@ class regenerateStatusAttend extends BaseController {
         */
             
         const _time = moment(currCheck, "HH.mm");
-        const _prevCheck = moment(prevCheck, "HH:mm");
         let status = "";
-        if (_time.isSameOrAfter(_time.set({hour: 5, minute: 0})) && _time.isBefore(_time.set({hour: 12, minute: 0})) ){
+
+        console.log(moment(_time).set({hour: 14, minute: 0}))
+        console.log(_time)
+        if (_time.isSameOrAfter(moment(_time).set({hour: 5, minute: 0})) && _time.isBefore(moment(_time).set({hour: 12, minute: 0})) ){
             // Attend status is CHECKIN
             // attendSession.sessionNumber = 1;
 
             
             status = "CHECKIN";
 
-        } else if (_time.isSameOrAfter(_time.set({hour: 14, minute: 0}))  && _time.isSameOrBefore( _time.set({hour: 21, minute: 59}))) {
-            if (_prevCheck.isSameOrAfter(_time.set({hour: 5, minute: 0})) && _prevCheck.isSameOrBefore(_time.set({hour: 12, minute: 0})) ) {
-                // Attend status is CHECKOUT
-                // attendSession.sessionNumber = 2;
-                status = "CHECKOUT";
+        } else if (_time.isSameOrAfter(moment(_time).set({hour: 14, minute: 0})) && _time.isSameOrBefore( moment(_time).set({hour: 21, minute: 59}))) {
+            if (prevCheck) {
+                const _prevCheck = moment(prevCheck, "HH:mm");
+                if (_prevCheck.isSameOrAfter(moment(_time).set({hour: 5, minute: 0})) && _prevCheck.isSameOrBefore(moment(_time).set({hour: 12, minute: 0})) ) {
+                    // Attend status is CHECKOUT
+                    // attendSession.sessionNumber = 2;
+                    status = "CHECKOUT";
+                } else if (_prevCheck.isSameOrBefore(moment(_time).set({hour: 3, minute: 0})) || _prevCheck.isSameOrAfter(moment(_time).set({hour: 21, minute: 0})) ) {
+                    // Attend status is CHECKIN
+                    // attendSession.sessionNumber = 2;
+                    status = "CHECKIN";
+                } else {
+                    status = "CHECKOUT";   
+                }
             } else {
-                // Attend status is CHECKIN
-                // attendSession.sessionNumber = 2;
-                status = "CHECKIN";
+                status = "CHECKOUT";
             }
+
+            
+        } else if (_time.isSameOrAfter(moment(_time).set({hour: 22, minute: 0}))  || _time.isSameOrBefore( moment(_time).set({hour: 4, minute: 59}))) {
+            
+            status = "CHECKOUT"
         } else {
+            console.log(_time)
             // attendSession.sessionNumber = 99;
             status = "ABNORMAL";
         }

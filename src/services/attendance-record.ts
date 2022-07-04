@@ -37,7 +37,7 @@ class AttendanceRecord {
             where: {
                 ...where,
                 recordTime: {
-                    [Op.gt]: moment(_where.dateStart, 'DD-MM-YYYY').startOf('days').toDate(),
+                    [Op.gte]: moment(_where.dateStart, 'DD-MM-YYYY').startOf('days').toDate(),
                     [Op.lte]: moment(_where.dateEnd, 'DD-MM-YYYY').endOf('days').toDate()
                 }
             },
@@ -52,7 +52,7 @@ class AttendanceRecord {
             where: {
                 employeeId: employeeId,
                 recordTime: {
-                    [Op.gt]: moment(dateStart, 'DD-MM-YYYY').startOf('days').format('YYYY-MM-DD HH:mm'),
+                    [Op.gte]: moment(dateStart, 'DD-MM-YYYY').startOf('days').format('YYYY-MM-DD HH:mm'),
                     [Op.lte]: moment(dateEnd, 'DD-MM-YYYY').endOf('days').format('YYYY-MM-DD HH:mm')
                 }
             },

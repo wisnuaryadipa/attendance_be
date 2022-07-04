@@ -39,7 +39,7 @@ class regenerateStatusAttend extends BaseController {
             dateStart = dateStart ? dateStart.toString() : moment().startOf('days').format('DD/MM/YYYY');
             dateEnd = dateEnd ? dateEnd.toString() : moment().endOf('day').format('DD/MM/YYYY');
     
-            let _attendances = await services.attendanceRecord.getAttendances({dateStart, dateEnd});
+            let _attendances = await services.attendanceRecord.getAttendances({dateStart, dateEnd, employeeId: '35'});
             await this.identifyAndEditStatusAttendances(_attendances)
     
             this.responseOption = {

@@ -20,6 +20,7 @@ class regenerateStatusAttend extends BaseController {
         body: Joi.object({
         }).required(),
         query: Joi.object({
+            employeeId: Joi.string(),
             dateStart: Joi.string().required(),
             dateEnd: Joi.string().required()
         }).required(),
@@ -34,12 +35,15 @@ class regenerateStatusAttend extends BaseController {
             const _reqValidate = await this.validateRequest(req)
             let {body, params, query} = _reqValidate;
             
-            let {dateStart, dateEnd} = query;
+            let {dateStart, dateEnd, employeeId} = query;
     
             dateStart = dateStart ? dateStart.toString() : moment().startOf('days').format('DD/MM/YYYY');
             dateEnd = dateEnd ? dateEnd.toString() : moment().endOf('day').format('DD/MM/YYYY');
     
-            let _attendances = await services.attendanceRecord.getAttendances({dateStart, dateEnd, employeeId: '35'});
+            let _attendances = await services.attendanceRecord.getAttendances({
+                dateStart, dateEnd, employeeId: employeeId?.toString() 
+            });
+            
             await this.identifyAndEditStatusAttendances(_attendances)
     
             this.responseOption = {
@@ -100,6 +104,7 @@ class regenerateStatusAttend extends BaseController {
 
         } else if (_time.isSameOrAfter(moment(_time).set({hour: 14, minute: 0})) && _time.isSameOrBefore( moment(_time).set({hour: 21, minute: 59}))) {
             if (prevCheck) {
+                console.log(prevCheck)
                 const _prevCheck = moment(prevCheck, "HH:mm");
                 if (_prevCheck.isSameOrAfter(moment(_time).set({hour: 5, minute: 0})) && _prevCheck.isSameOrBefore(moment(_time).set({hour: 12, minute: 0})) ) {
                     // Attend status is CHECKOUT

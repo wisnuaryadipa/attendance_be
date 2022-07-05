@@ -83,6 +83,7 @@ class AttendanceRecord {
             where: {
                 employeeId: _employeeId,
                 recordTime: {
+                    [Op.gte]: moment(_recordTime).subtract(1, 'day').set({hour: 21}).toDate(),
                     [Op.lt]: moment(_recordTime).toDate()
                 }
             },
